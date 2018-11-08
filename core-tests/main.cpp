@@ -2,6 +2,7 @@
 #include "tst_HistoryAndState.h"
 #include "tst_Utils.h"
 #include "tst_SearchStrategy.h"
+#include "tst_Solver.h"
 
 #include <gtest/gtest.h>
 

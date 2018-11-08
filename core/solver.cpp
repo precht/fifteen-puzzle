@@ -41,7 +41,6 @@ bool Solver::solve(SearchStrategyContainer *pContainer)
   State currentState = mVisited.getFirstInserted({mFinalBoard, None});
   while (currentState.direction != None) {
     mResult.push_back(currentState.direction);
-    // FIXME leci error w movemencie
     Utils::reverseMovement(currentState);
     currentState = mVisited.getFirstInserted(currentState);
   }
@@ -64,20 +63,23 @@ bool Solver::solve()
   while (!mpWaitingMovements->isEmpty()) {
     currentState = mpWaitingMovements->next();
     mpWaitingMovements->pop();
+
     Utils::makeMovement(currentState);
+    if (mVisited.find(currentState))
+      continue;
+    mVisited.insert(currentState);
+
     if (currentState.board == mFinalBoard) {
       mVisited.insert(currentState);
       return true;
     }
+
     possibleDirections = Utils::generatePossibleDirections(currentState.board);
     for (auto &direction : possibleDirections) {
       currentState.direction = direction;
-      if (!mVisited.find(currentState))
-        mpWaitingMovements->push(currentState);
+      mpWaitingMovements->push(currentState);
     }
-    mVisited.insert(currentState);
   }
-
 
   return false;
 }

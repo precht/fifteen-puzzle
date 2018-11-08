@@ -148,5 +148,3 @@ void Utils::printBoard(const Board &cBoard, std::ostream &output)
   }
   output << std::string(cColumns * (cMaxDigitCount + 1) + 3, '*') << '\n';
 }
-
-

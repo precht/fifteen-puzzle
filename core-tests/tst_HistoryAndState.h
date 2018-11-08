@@ -20,7 +20,6 @@ TEST(HistoryAndState, stateEquals_shouldPass)
   EXPECT_EQ(s1, s2);
 }
 
-
 TEST(HistoryAndState, stateEquals_shouldFail)
 {
   Board a(1, 1), b(1, 1);

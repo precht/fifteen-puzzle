@@ -63,7 +63,7 @@ TEST(Board, compareBoardsAndHashes_shouldBeSame)
   b.setValueAt(1, 2, 3);
   EXPECT_EQ(a, b);
   EXPECT_EQ(a.memory(), b.memory());
- }
+}
 
 TEST(Board, compareBoardsAndHashes_shouldBeDifferent) {
   Board a(2, 3), b(4, 4), c(4, 4);

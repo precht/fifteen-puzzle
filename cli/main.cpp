@@ -12,12 +12,12 @@ int main()
 
   try {
     Board board(3, 3);
-    board.setValueAt(0, 0, 1);
-    board.setValueAt(0, 1, 2);
+    board.setValueAt(0, 0, 0);
+    board.setValueAt(0, 1, 1);
     board.setValueAt(0, 2, 3);
 
     board.setValueAt(1, 0, 4);
-    board.setValueAt(1, 1, 0);
+    board.setValueAt(1, 1, 2);
     board.setValueAt(1, 2, 5);
 
     board.setValueAt(2, 0, 7);
@@ -27,8 +27,13 @@ int main()
     Solver solver(board);
     Bfs bfs;
     Dfs dfs;
+    DirectionToString ds;
     cout << Utils::isSolvable(board) << endl;
-    cout << solver.solve(&bfs) << endl;
+    cout << solver.solve(&dfs) << endl;
+    for (auto &a : solver.result())
+      cout << ds(a) << " ";
+    cout << endl;
+    cout << solver.result().size() << endl;
   }
   catch(const CoreException &exception) {
       std::cerr << exception.what() << std::endl;
