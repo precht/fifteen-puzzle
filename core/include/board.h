@@ -24,7 +24,9 @@ public:
   uint8_t size() const;
   uint64_t memory() const;
   uint8_t valueAt(const uint8_t cRow, const  uint8_t cColumn) const;
+  uint8_t valueAt(const Position cPosition) const;
   void setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue);
+  void setValueAt(const Position cPosition, const uint8_t cValue);
   bool operator==(const Board &cOther) const;
   bool operator!=(const Board &cOther) const;
 };

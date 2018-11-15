@@ -6,10 +6,13 @@
 #include "direction.h"
 #include "state.h"
 #include "history.h"
-#include "searchstrategycontainer.h"
 #include "utils.h"
 #include "solver.h"
-#include "dfs.h"
-#include "bfs.h"
+#include "dfssolver.h"
+#include "bfssolver.h"
+#include "idfssolver.h"
+#include "bestfirstsolver.h"
+#include "astarsolver.h"
+#include "smastarsolver.h"
 
 #endif // CORE_H

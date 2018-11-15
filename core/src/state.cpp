@@ -3,8 +3,8 @@
 State::State()
 { }
 
-State::State(const Board &board, const Direction direction)
-  : board(board), direction(direction)
+State::State(const Board &board, const Direction direction, int64_t level)
+  : board(board), direction(direction), level(level)
 { }
 
 bool State::operator==(const State &cOther) const

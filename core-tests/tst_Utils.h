@@ -7,7 +7,6 @@ using namespace testing;
 
 #include "utils.h"
 #include "board.h"
-#include "state.h"
 #include "coreexception.h"
 
 #include <algorithm>
@@ -179,73 +178,66 @@ TEST(Utils, makeMovement_shouldMake)
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
 
-  State s(a, Left);
-  Utils::makeMovement(s);
+  Board b = a;
+  Utils::makeMovement(b, Left);
   a.setValueAt(0, 0, 1);
   a.setValueAt(0, 1, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Up;
-  Utils::makeMovement(s);
+  Utils::makeMovement(b, Up);
   a.setValueAt(0, 1, 3);
   a.setValueAt(1, 1, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Right;
-  Utils::makeMovement(s);
+  Utils::makeMovement(b, Right);
   a.setValueAt(1, 1, 2);
   a.setValueAt(1, 0, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Down;
-  Utils::makeMovement(s);
+  Utils::makeMovement(b, Down);
   a.setValueAt(0, 0, 0);
   a.setValueAt(1, 0, 1);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 }
 
 TEST(Utils, makeMovement9Puzzle)
 {
-  Board board(3, 3);
-  board.setValueAt(0, 0, 1);
-  board.setValueAt(0, 1, 2);
-  board.setValueAt(0, 2, 3);
+  Board a(3, 3), b, expect;
+  a.setValueAt(0, 0, 1);
+  a.setValueAt(0, 1, 2);
+  a.setValueAt(0, 2, 3);
 
-  board.setValueAt(1, 0, 4);
-  board.setValueAt(1, 1, 0);
-  board.setValueAt(1, 2, 5);
+  a.setValueAt(1, 0, 4);
+  a.setValueAt(1, 1, 0);
+  a.setValueAt(1, 2, 5);
 
-  board.setValueAt(2, 0, 7);
-  board.setValueAt(2, 1, 8);
-  board.setValueAt(2, 2, 6);
+  a.setValueAt(2, 0, 7);
+  a.setValueAt(2, 1, 8);
+  a.setValueAt(2, 2, 6);
 
-  State s(board, Right);
-  Board expect = board;
+  expect = b = a;
   expect.setValueAt(1, 1, 4);
   expect.setValueAt(1, 0, 0);
-  Utils::makeMovement(s);
-  EXPECT_EQ(s.board, expect);
+  Utils::makeMovement(b, Right);
+  EXPECT_EQ(b, expect);
 
-  s = {board, Left};
-  expect = board;
+  expect = b = a;
   expect.setValueAt(1, 1, 5);
   expect.setValueAt(1, 2, 0);
-  Utils::makeMovement(s);
-  EXPECT_EQ(s.board, expect);
+  Utils::makeMovement(b, Left);
+  EXPECT_EQ(b, expect);
 
-  s = {board, Up};
-  expect = board;
+  expect = b = a;
   expect.setValueAt(1, 1, 8);
   expect.setValueAt(2, 1, 0);
-  Utils::makeMovement(s);
-  EXPECT_EQ(s.board, expect);
+  Utils::makeMovement(b, Up);
+  EXPECT_EQ(b, expect);
 
-  s = {board, Down};
-  expect = board;
+  expect = b = a;
   expect.setValueAt(1, 1, 2);
   expect.setValueAt(0, 1, 0);
-  Utils::makeMovement(s);
-  EXPECT_EQ(s.board, expect);
+  Utils::makeMovement(b, Down);
+  EXPECT_EQ(b, expect);
 }
 
 
@@ -256,51 +248,47 @@ TEST(Utils, makeMovement_shouldThrow)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
-  State s = {a, Right};
-  EXPECT_THROW(Utils::makeMovement(s), CoreException);
-  s = {a, Down};
-  EXPECT_THROW(Utils::makeMovement(s), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Right), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Down), CoreException);
   a.setValueAt(0, 0, 3);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 0);
-  s = {a, Left};
-  EXPECT_THROW(Utils::makeMovement(s), CoreException);
-  s = {a, Up};
-  EXPECT_THROW(Utils::makeMovement(s), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Left), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Up), CoreException);
 }
 
 TEST(Utils, reverseMovement_shouldMake)
 {
-  Board a(2, 2);
+  Board a(2, 2), b;
   a.setValueAt(0, 0, 0);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
 
-  State s(a, Right);
-  Utils::reverseMovement(s);
+  b = a;
+  Utils::reverseMovement(b, Right);
   a.setValueAt(0, 0, 1);
   a.setValueAt(0, 1, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Down;
-  Utils::reverseMovement(s);
+  b = a;
+  Utils::reverseMovement(b, Down);
   a.setValueAt(0, 1, 3);
   a.setValueAt(1, 1, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Left;
-  Utils::reverseMovement(s);
+  b = a;
+  Utils::reverseMovement(b, Left);
   a.setValueAt(1, 1, 2);
   a.setValueAt(1, 0, 0);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 
-  s.direction = Up;
-  Utils::reverseMovement(s);
+  b = a;
+  Utils::reverseMovement(b, Up);
   a.setValueAt(0, 0, 0);
   a.setValueAt(1, 0, 1);
-  EXPECT_EQ(s.board, a);
+  EXPECT_EQ(b, a);
 }
 
 TEST(Utils, reverseMovement_shouldThrow)
@@ -310,52 +298,48 @@ TEST(Utils, reverseMovement_shouldThrow)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
-  State s = {a, Left};
-  EXPECT_THROW(Utils::reverseMovement(s), CoreException);
-  s = {a, Up};
-  EXPECT_THROW(Utils::reverseMovement(s), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Left), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Up), CoreException);
   a.setValueAt(0, 0, 3);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 0);
-  s = {a, Right};
-  EXPECT_THROW(Utils::reverseMovement(s), CoreException);
-  s = {a, Down};
-  EXPECT_THROW(Utils::reverseMovement(s), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Right), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Down), CoreException);
 }
 
 TEST(Utils, reverseMovement9Puzzle)
 {
-  Board board(3, 3);
-  board.setValueAt(0, 0, 1);
-  board.setValueAt(0, 1, 2);
-  board.setValueAt(0, 2, 3);
+  Board a(3, 3), b;
+  a.setValueAt(0, 0, 1);
+  a.setValueAt(0, 1, 2);
+  a.setValueAt(0, 2, 3);
 
-  board.setValueAt(1, 0, 4);
-  board.setValueAt(1, 1, 0);
-  board.setValueAt(1, 2, 5);
+  a.setValueAt(1, 0, 4);
+  a.setValueAt(1, 1, 0);
+  a.setValueAt(1, 2, 5);
 
-  board.setValueAt(2, 0, 7);
-  board.setValueAt(2, 1, 8);
-  board.setValueAt(2, 2, 6);
+  a.setValueAt(2, 0, 7);
+  a.setValueAt(2, 1, 8);
+  a.setValueAt(2, 2, 6);
 
-  State s(board, Right);
-  Utils::makeMovement(s);
-  Utils::reverseMovement(s);
-  EXPECT_EQ(s.board, board);
+  b = a;
+  Utils::makeMovement(b, Right);
+  Utils::reverseMovement(b, Right);
+  EXPECT_EQ(b, a);
 
-  s = {board, Right};
-  Utils::makeMovement(s);
-  Utils::reverseMovement(s);
-  EXPECT_EQ(s.board, board);
+  b = a;
+  Utils::makeMovement(b, Left);
+  Utils::reverseMovement(b, Left);
+  EXPECT_EQ(b, a);
 
-  s = {board, Right};
-  Utils::makeMovement(s);
-  Utils::reverseMovement(s);
-  EXPECT_EQ(s.board, board);
+  b = a;
+  Utils::makeMovement(b, Up);
+  Utils::reverseMovement(b, Up);
+  EXPECT_EQ(b, a);
 
-  s = {board, Right};
-  Utils::makeMovement(s);
-  Utils::reverseMovement(s);
-  EXPECT_EQ(s.board, board);
+  b = a;
+  Utils::makeMovement(b, Down);
+  Utils::reverseMovement(b, Down);
+  EXPECT_EQ(b, a);
 }

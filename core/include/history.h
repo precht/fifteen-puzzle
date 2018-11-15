@@ -1,9 +1,8 @@
 #ifndef HISTORY_H
 #define HISTORY_H
 
-#include <unordered_set>
 #include "state.h"
-
+#include <unordered_set>
 
 class History
 {

@@ -7,7 +7,6 @@
 #include <vector>
 
 class Board;
-struct State;
 struct Position;
 
 struct Utils
@@ -16,8 +15,8 @@ struct Utils
   static Position getZeroPosition(const Board &cBoard);
   static Board constructFinalBoard(const uint8_t cRows, const uint8_t cColumns);
   static std::vector<Direction> generatePossibleDirections(const Board &cBoard);
-  static void makeMovement(State &movement);
-  static void reverseMovement(State &movement);
+  static void makeMovement(Board &board, Direction direction);
+  static void reverseMovement(Board &board, Direction direction);
   static void printBoard(const Board &cBoard, std::ostream &output);
 };
 

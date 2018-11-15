@@ -7,6 +7,7 @@ SOURCES += \
         main.cpp
 
 include(../core/core.pri)
+include(../common.pri)
 
 DISTFILES += \
     input

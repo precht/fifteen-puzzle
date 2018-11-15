@@ -4,35 +4,41 @@ TEMPLATE = lib
 FIFTEEN_PUZZLE_PWD = $$PWD/..
 
 QT -= core gui
-CONFIG += staticlib c++14
-QMAKE_CXXFLAGS += -Wshadow
+CONFIG += staticlib
+include(../common.pri)
 
 INCLUDEPATH += include
 
 HEADERS += \
-    board.h \
-    direction.h \
-    history.h \
-    searchstrategycontainer.h \
-    solver.h \
-    coreexception.h \
-    state.h \
-    utils.h \
-    dfs.h \
-    bfs.h \
-    core.h
+    include/board.h \
+    include/direction.h \
+    include/history.h \
+    include/coreexception.h \
+    include/state.h \
+    include/utils.h \
+    include/core.h \
+    include/solver.h \
+    include/dfssolver.h \
+    include/bfssolver.h \
+    include/idfssolver.h \
+    include/bestfirstsolver.h \
+    include/astarsolver.h \
+    include/smastarsolver.h
 
 SOURCES += \
-    board.cpp \
-    aiexception.cpp \
-    history.cpp \
-    searchstrategycontainer.cpp \
-    solver.cpp \
-    state.cpp \
-    utils.cpp \
-    dfs.cpp \
-    bfs.cpp \
-    direction.cpp
+    src/board.cpp \
+    src/history.cpp \
+    src/state.cpp \
+    src/utils.cpp \
+    src/direction.cpp \
+    src/solver.cpp \
+    src/dfssolver.cpp \
+    src/bfssolver.cpp \
+    src/coreexception.cpp \
+    src/idfssolver.cpp \
+    src/bestfirstsolver.cpp \
+    src/astarsolver.cpp \
+    src/smastarsolver.cpp
 
-DISTFILES += \
+OTHER_FILES += \
     core.pri

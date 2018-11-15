@@ -7,3 +7,8 @@ SUBDIRS += \
 
 cli.depends = core
 core-tests.depends = core
+
+OTHER_FILES +=
+
+OTHER_FILES += \
+    common.pri

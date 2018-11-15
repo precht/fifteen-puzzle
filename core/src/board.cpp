@@ -42,6 +42,11 @@ uint8_t Board::valueAt(const uint8_t cRow, const uint8_t cColumn) const
   return (mMemory >> cFirstBitPosition) & 0b1111;
 }
 
+uint8_t Board::valueAt(const Position cPosition) const
+{
+  return valueAt(cPosition.row, cPosition.column);
+}
+
 void Board::setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue)
 {
   if (cRow >= mRows || cColumn >= mColumns || cValue >= 16)
@@ -49,6 +54,11 @@ void Board::setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t 
   const auto cFirstBitPosition = (cRow * mColumns + cColumn) << 2;
   mMemory &= ~(static_cast<uint64_t>(0b1111) << cFirstBitPosition);
   mMemory |= (static_cast<uint64_t>(cValue) << cFirstBitPosition);
+}
+
+void Board::setValueAt(const Position cPosition, const uint8_t cValue)
+{
+  setValueAt(cPosition.row, cPosition.column, cValue);
 }
 
 bool Board::operator==(const Board &cOther) const

@@ -1,7 +1,6 @@
 #include "utils.h"
 
 #include "board.h"
-#include "state.h"
 #include "coreexception.h"
 
 #include <vector>
@@ -78,15 +77,15 @@ std::vector<Direction> Utils::generatePossibleDirections(const Board &cBoard)
   return possibleDirections;
 }
 
-void Utils::makeMovement(State &movement)
+void Utils::makeMovement(Board &board, Direction direction)
 {
-  auto zeroPosition = Utils::getZeroPosition(movement.board);
+  auto zeroPosition = Utils::getZeroPosition(board);
 
   bool isCorrectDirection = true;
-  switch (movement.direction) {
-  case Left: isCorrectDirection = (zeroPosition.column + 1 != movement.board.columns()); break;
+  switch (direction) {
+  case Left: isCorrectDirection = (zeroPosition.column + 1 != board.columns()); break;
   case Right: isCorrectDirection = (zeroPosition.column != 0); break;
-  case Up: isCorrectDirection = (zeroPosition.row + 1 != movement.board.rows()); break;
+  case Up: isCorrectDirection = (zeroPosition.row + 1 != board.rows()); break;
   case Down: isCorrectDirection = (zeroPosition.row != 0); break;
   default: isCorrectDirection = false;
   }
@@ -94,39 +93,39 @@ void Utils::makeMovement(State &movement)
     throw CoreException(__FILE__, __LINE__);
 
   uint8_t value;
-  switch (movement.direction) {
+  switch (direction) {
   case Left:
-    value = movement.board.valueAt(zeroPosition.row, zeroPosition.column + 1);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column + 1, 0);
+    value = board.valueAt(zeroPosition.row, zeroPosition.column + 1);
+    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    board.setValueAt(zeroPosition.row, zeroPosition.column + 1, 0);
     break;
   case Right:
-    value = movement.board.valueAt(zeroPosition.row, zeroPosition.column - 1);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column - 1, 0);
+    value = board.valueAt(zeroPosition.row, zeroPosition.column - 1);
+    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    board.setValueAt(zeroPosition.row, zeroPosition.column - 1, 0);
     break;
   case Up:
-    value = movement.board.valueAt(zeroPosition.row + 1, zeroPosition.column);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    movement.board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
+    value = board.valueAt(zeroPosition.row + 1, zeroPosition.column);
+    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
     break;
   default: // Down
-    value = movement.board.valueAt(zeroPosition.row - 1, zeroPosition.column);
-    movement.board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    movement.board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
+    value = board.valueAt(zeroPosition.row - 1, zeroPosition.column);
+    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
   }
 }
 
-void Utils::reverseMovement(State &movement)
+void Utils::reverseMovement(Board &board, Direction direction)
 {
-  switch (movement.direction) {
-  case Left: movement.direction = Right; break;
-  case Right: movement.direction = Left; break;
-  case Up: movement.direction = Down; break;
-  case Down: movement.direction = Up; break;
+  switch (direction) {
+  case Left: direction = Right; break;
+  case Right: direction = Left; break;
+  case Up: direction = Down; break;
+  case Down: direction = Up; break;
   default: throw CoreException(__FILE__, __LINE__);
   }
-  Utils::makeMovement(movement);
+  Utils::makeMovement(board, direction);
 }
 
 void Utils::printBoard(const Board &cBoard, std::ostream &output)
