@@ -7,7 +7,7 @@
 class IdfsSolver : public Solver
 {
   std::stack<State> mStack;
-  int64_t cDepthLimit = 10; //1.31e12;
+  int64_t cPathLenghtLimit = 1.31e12;
 
 private:
   bool solve() override;

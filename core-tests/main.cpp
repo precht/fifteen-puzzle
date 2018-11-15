@@ -1,7 +1,8 @@
-#include "tst_Board.h"
-#include "tst_HistoryAndState.h"
-#include "tst_Utils.h"
-#include "tst_Solvers.h"
+#include "tst_board.h"
+#include "tst_utils.h"
+#include "tst_history_state.h"
+#include "tst_heuristic.h"
+#include "tst_solvers.h"
 
 #include <gtest/gtest.h>
 

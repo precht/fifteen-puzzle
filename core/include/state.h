@@ -11,18 +11,27 @@ struct State
 {
   Board board;
   Direction direction;
-  int64_t level = 0;
+  int64_t visitedCost = 0;
+  int64_t estimatedTotalCost = 0;
 
-public:
   State();
-  State(const Board &board, const Direction direction, int64_t level = 0);
-  bool operator==(const State &cOther) const;
-  bool operator!=(const State &cOther) const;
+  State(const Board &board, const Direction direction);
 };
 
-struct StateHash
+struct StateBoardHash
 {
-  std::size_t operator()(const State &cState) const noexcept;
+  std::size_t operator()(const State &cState) const;
 };
+
+struct StateBoardEqual
+{
+  bool operator()(const State &cLhs, const State &cRhs) const;
+};
+
+struct StateTotalCostGreater
+{
+  bool operator()(const State &cLhs, const State &cRhs) const;
+};
+
 
 #endif // STATE_H

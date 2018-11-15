@@ -27,6 +27,7 @@ public:
   uint8_t valueAt(const Position cPosition) const;
   void setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue);
   void setValueAt(const Position cPosition, const uint8_t cValue);
+  Position getPosition(const uint8_t cValue) const;
   bool operator==(const Board &cOther) const;
   bool operator!=(const Board &cOther) const;
 };

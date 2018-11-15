@@ -6,6 +6,7 @@
 using namespace testing;
 
 #include "history.h"
+#include <queue>
 
 TEST(HistoryAndState, createHistory_shouldCreate)
 {
@@ -17,7 +18,8 @@ TEST(HistoryAndState, stateEquals_shouldPass)
 {
   Board a;
   State s1(a, Left), s2(a, Right);
-  EXPECT_EQ(s1, s2);
+  StateBoardEqual equal;
+  EXPECT_TRUE(equal(s1, s2));
 }
 
 TEST(HistoryAndState, stateEquals_shouldFail)
@@ -26,7 +28,8 @@ TEST(HistoryAndState, stateEquals_shouldFail)
   a.setValueAt(0, 0, 1);
   b.setValueAt(0, 0, 2);
   State s1(a, Left), s2(b, Right);
-  EXPECT_NE(s1, s2);
+  StateBoardEqual equal;
+  EXPECT_FALSE(equal(s1, s2));
 }
 
 TEST(HistoryAndState, insertDifferentBoards_shouldInsert)
@@ -99,4 +102,27 @@ TEST(HistoryAndState, clear_shouldBeEmpty)
   EXPECT_FALSE(h.find({a, None}));
   EXPECT_FALSE(h.find({b, None}));
   EXPECT_FALSE(h.find({c, None}));
+}
+
+TEST(HistoryAndState, checkStateComparatorForPriorityQueue)
+{
+  std::priority_queue<State, std::vector<State>, StateTotalCostGreater> pq;
+  State a, b, c;
+  a.estimatedTotalCost = 1;
+  b.estimatedTotalCost = 2;
+  c.estimatedTotalCost = 3;
+
+  pq.push(b);
+  pq.push(a);
+  pq.push(b);
+  pq.push(c);
+
+  EXPECT_EQ(pq.top().estimatedTotalCost, 1);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedTotalCost, 2);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedTotalCost, 2);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedTotalCost, 3);
+  pq.pop();
 }

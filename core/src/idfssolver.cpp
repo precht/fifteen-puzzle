@@ -3,11 +3,11 @@
 
 bool IdfsSolver::solve()
 {
-  for (int64_t iDepth = 1; iDepth < cDepthLimit; iDepth++) {
+  for (int64_t iCost = 1; iCost < cPathLenghtLimit; iCost++) {
     mStack = {};
     mVisited.clear();
 
-    State currentState = { mInitialBoard, None, iDepth };
+    State currentState = { mInitialBoard, None };
     mVisited.insert(currentState);
 
     auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
@@ -27,8 +27,8 @@ bool IdfsSolver::solve()
       if (currentState.board == mFinalBoard)
         return true;
 
-      currentState.level--;
-      if (currentState.level <= 0)
+      currentState.visitedCost++;
+      if (currentState.visitedCost >= iCost)
         continue;
 
       possibleDirections = Utils::generatePossibleDirections(currentState.board);

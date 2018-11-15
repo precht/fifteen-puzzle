@@ -4,7 +4,7 @@
 #include "direction.h"
 #include "board.h"
 #include "history.h"
-
+#include "heuristic.h"
 #include <vector>
 
 class Solver
@@ -15,9 +15,10 @@ protected:
   History mVisited;
   std::vector<Direction> mResult;
   uint64_t mCheckedStates = 0;
+  HeuristicType mDistanceType = WrongCount;
 
 public:
-  bool solve(const Board &cInitialBoard);
+  bool solve(const Board &cInitialBoard, const HeuristicType cType = WrongCount);
   std::vector<Direction> result() const;
   uint64_t checkedStates() const;
 

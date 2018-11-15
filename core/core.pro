@@ -23,7 +23,8 @@ HEADERS += \
     include/idfssolver.h \
     include/bestfirstsolver.h \
     include/astarsolver.h \
-    include/smastarsolver.h
+    include/smastarsolver.h \
+    include/heuristic.h
 
 SOURCES += \
     src/board.cpp \
@@ -38,7 +39,8 @@ SOURCES += \
     src/idfssolver.cpp \
     src/bestfirstsolver.cpp \
     src/astarsolver.cpp \
-    src/smastarsolver.cpp
+    src/smastarsolver.cpp \
+    src/heuristic.cpp
 
 OTHER_FILES += \
     core.pri

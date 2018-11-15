@@ -6,7 +6,8 @@
 
 class History
 {
-  std::unordered_set<State, StateHash> mVisited;
+  std::unordered_set<State, StateBoardHash, StateBoardEqual> mVisited;
+
 public:
   bool insert(const State &cState);
   bool find(const State &cState) const;

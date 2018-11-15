@@ -9,10 +9,11 @@ CONFIG -= qt app_bundle
 include(../common.pri)
 
 HEADERS += \
-    tst_Board.h \
-    tst_HistoryAndState.h \
-    tst_Utils.h \
-    tst_Solvers.h
+    tst_heuristic.h \
+    tst_board.h \
+    tst_solvers.h \
+    tst_utils.h \
+    tst_history_state.h
 
 SOURCES += \
         main.cpp

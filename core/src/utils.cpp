@@ -34,6 +34,7 @@ bool Utils::isSolvable(const Board &cBoard)
     return inversionCount % 2 == 1;
 }
 
+// TODO replace all occurrences with Board::getPosition(0)
 Position Utils::getZeroPosition(const Board &cBoard)
 {
   int zeroCount = 0;
@@ -109,10 +110,13 @@ void Utils::makeMovement(Board &board, Direction direction)
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
     break;
-  default: // Down
+  case Down:
     value = board.valueAt(zeroPosition.row - 1, zeroPosition.column);
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
+    break;
+  default:
+    throw CoreException(__FILE__, __LINE__);
   }
 }
 

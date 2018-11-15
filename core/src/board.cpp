@@ -11,7 +11,7 @@ Board::Board(const uint8_t cRows, const uint8_t cColumns)
   : mRows(cRows), mColumns(cColumns), mMemory(0)
 {
   if (mRows * mColumns > 16)
-    throw CoreException(__FILE__, __LINE__, "Board size is bigger then 15 puzzle. Unsupported.");
+    throw CoreException(__FILE__, __LINE__);
 }
 
 uint8_t Board::rows() const
@@ -50,7 +50,7 @@ uint8_t Board::valueAt(const Position cPosition) const
 void Board::setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue)
 {
   if (cRow >= mRows || cColumn >= mColumns || cValue >= 16)
-    throw CoreException(__FILE__, __LINE__, std::to_string(mRows) + " " + std::to_string(mColumns) + " " + std::to_string(cValue));
+    throw CoreException(__FILE__, __LINE__);
   const auto cFirstBitPosition = (cRow * mColumns + cColumn) << 2;
   mMemory &= ~(static_cast<uint64_t>(0b1111) << cFirstBitPosition);
   mMemory |= (static_cast<uint64_t>(cValue) << cFirstBitPosition);
@@ -59,6 +59,15 @@ void Board::setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t 
 void Board::setValueAt(const Position cPosition, const uint8_t cValue)
 {
   setValueAt(cPosition.row, cPosition.column, cValue);
+}
+
+Position Board::getPosition(const uint8_t cValue) const
+{
+  for (uint8_t iRow = 0; iRow < mRows; iRow++)
+    for (uint8_t iColumn = 0; iColumn < mColumns; iColumn++)
+      if (valueAt(iRow, iColumn) == cValue)
+        return { iRow, iColumn };
+  throw CoreException(__FILE__, __LINE__);
 }
 
 bool Board::operator==(const Board &cOther) const
@@ -71,5 +80,4 @@ bool Board::operator==(const Board &cOther) const
 bool Board::operator!=(const Board &cOther) const
 {
   return !(*this == cOther);
-//  return false;
 }

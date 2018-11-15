@@ -3,10 +3,11 @@
 
 #include <algorithm>
 
-bool Solver::solve(const Board &cInitialBoard)
+bool Solver::solve(const Board &cInitialBoard, const HeuristicType cType)
 {
   mInitialBoard = cInitialBoard;
   mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
+  mDistanceType = cType;
 
   mResult.clear();
   mVisited.clear();

@@ -3,21 +3,21 @@
 State::State()
 { }
 
-State::State(const Board &board, const Direction direction, int64_t level)
-  : board(board), direction(direction), level(level)
+State::State(const Board &board, const Direction direction)
+  : board(board), direction(direction)
 { }
 
-bool State::operator==(const State &cOther) const
-{
-  return (cOther.board == this->board);
-}
-
-bool State::operator!=(const State &cOther) const
-{
-  return !(*this == cOther);
-}
-
-std::size_t StateHash::operator()(const State &cState) const noexcept
+std::size_t StateBoardHash::operator()(const State &cState) const
 {
   return cState.board.memory();
+}
+
+bool StateBoardEqual::operator()(const State &cLhs, const State &cRhs) const
+{
+  return (cLhs.board == cRhs.board);
+}
+
+bool StateTotalCostGreater::operator()(const State &cLhs, const State &cRhs) const
+{
+  return (cLhs.estimatedTotalCost > cRhs.estimatedTotalCost);
 }
