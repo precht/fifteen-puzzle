@@ -3,7 +3,7 @@
 
 bool History::insert(const State &cState)
 {
-  return  mVisited.insert(cState).second;
+  return mVisited.insert(cState).second;
 }
 
 bool History::find(const State &cState) const

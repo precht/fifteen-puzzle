@@ -102,28 +102,6 @@ TEST(Utils, isSolvable_shouldNotBeTrue)
   EXPECT_FALSE(Utils::isSolvable(g));
 }
 
-TEST(Utils, getZeroPosition_shouldPass)
-{
-  Board a(2, 2);
-  a.setValueAt(0, 0, 3);
-  a.setValueAt(0, 1, 0);
-  a.setValueAt(1, 0, 1);
-  a.setValueAt(1, 1, 2);
-  EXPECT_EQ(Utils::getZeroPosition(a).row, 0);
-  EXPECT_EQ(Utils::getZeroPosition(a).column, 1);
-}
-
-TEST(Utils, getZeroPosition_shouldFail)
-{
-  Board a(2, 2);
-  EXPECT_THROW(Utils::getZeroPosition(a), CoreException);
-  a.setValueAt(0, 0, 3);
-  a.setValueAt(0, 1, 3);
-  a.setValueAt(1, 0, 3);
-  a.setValueAt(1, 1, 3);
-  EXPECT_THROW(Utils::getZeroPosition(a), CoreException);
-}
-
 TEST(Utils, generatePossibleDirection_zeroIsInCerter)
 {
   Board a(3, 3);
@@ -138,10 +116,10 @@ TEST(Utils, generatePossibleDirection_zeroIsInCerter)
   a.setValueAt(2, 2, 8);
   auto d = Utils::generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 4u);
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Left) != d.end());
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Right) != d.end());
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Up) != d.end());
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Down) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Left) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Right) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Up) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Down) != d.end());
 }
 
 TEST(Utils, generatePossibleDirectoin_zeroIsInUpLeftCorner)
@@ -153,8 +131,8 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInUpLeftCorner)
   a.setValueAt(1, 1, 3);
   auto d = Utils::generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Up) != d.end());
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Left) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Up) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Left) != d.end());
 }
 
 TEST(Utils, generatePossibleDirectoin_zeroIsInDownRightCorner)
@@ -166,8 +144,8 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInDownRightCorner)
   a.setValueAt(1, 1, 0);
   auto d = Utils::generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Down) != d.end());
-  EXPECT_TRUE(std::find(d.begin(), d.end(), Right) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Down) != d.end());
+  EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Right) != d.end());
 }
 
 TEST(Utils, makeMovement_shouldMake)
@@ -179,22 +157,22 @@ TEST(Utils, makeMovement_shouldMake)
   a.setValueAt(1, 1, 3);
 
   Board b = a;
-  Utils::makeMovement(b, Left);
+  Utils::makeMovement(b, Direction::Left);
   a.setValueAt(0, 0, 1);
   a.setValueAt(0, 1, 0);
   EXPECT_EQ(b, a);
 
-  Utils::makeMovement(b, Up);
+  Utils::makeMovement(b, Direction::Up);
   a.setValueAt(0, 1, 3);
   a.setValueAt(1, 1, 0);
   EXPECT_EQ(b, a);
 
-  Utils::makeMovement(b, Right);
+  Utils::makeMovement(b, Direction::Right);
   a.setValueAt(1, 1, 2);
   a.setValueAt(1, 0, 0);
   EXPECT_EQ(b, a);
 
-  Utils::makeMovement(b, Down);
+  Utils::makeMovement(b, Direction::Down);
   a.setValueAt(0, 0, 0);
   a.setValueAt(1, 0, 1);
   EXPECT_EQ(b, a);
@@ -218,25 +196,25 @@ TEST(Utils, makeMovement9Puzzle)
   expect = b = a;
   expect.setValueAt(1, 1, 4);
   expect.setValueAt(1, 0, 0);
-  Utils::makeMovement(b, Right);
+  Utils::makeMovement(b, Direction::Right);
   EXPECT_EQ(b, expect);
 
   expect = b = a;
   expect.setValueAt(1, 1, 5);
   expect.setValueAt(1, 2, 0);
-  Utils::makeMovement(b, Left);
+  Utils::makeMovement(b, Direction::Left);
   EXPECT_EQ(b, expect);
 
   expect = b = a;
   expect.setValueAt(1, 1, 8);
   expect.setValueAt(2, 1, 0);
-  Utils::makeMovement(b, Up);
+  Utils::makeMovement(b, Direction::Up);
   EXPECT_EQ(b, expect);
 
   expect = b = a;
   expect.setValueAt(1, 1, 2);
   expect.setValueAt(0, 1, 0);
-  Utils::makeMovement(b, Down);
+  Utils::makeMovement(b, Direction::Down);
   EXPECT_EQ(b, expect);
 }
 
@@ -248,14 +226,14 @@ TEST(Utils, makeMovement_shouldThrow)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
-  EXPECT_THROW(Utils::makeMovement(a, Right), CoreException);
-  EXPECT_THROW(Utils::makeMovement(a, Down), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Direction::Right), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Direction::Down), CoreException);
   a.setValueAt(0, 0, 3);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 0);
-  EXPECT_THROW(Utils::makeMovement(a, Left), CoreException);
-  EXPECT_THROW(Utils::makeMovement(a, Up), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Direction::Left), CoreException);
+  EXPECT_THROW(Utils::makeMovement(a, Direction::Up), CoreException);
 }
 
 TEST(Utils, reverseMovement_shouldMake)
@@ -267,25 +245,25 @@ TEST(Utils, reverseMovement_shouldMake)
   a.setValueAt(1, 1, 3);
 
   b = a;
-  Utils::reverseMovement(b, Right);
+  Utils::reverseMovement(b, Direction::Right);
   a.setValueAt(0, 0, 1);
   a.setValueAt(0, 1, 0);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::reverseMovement(b, Down);
+  Utils::reverseMovement(b, Direction::Down);
   a.setValueAt(0, 1, 3);
   a.setValueAt(1, 1, 0);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::reverseMovement(b, Left);
+  Utils::reverseMovement(b, Direction::Left);
   a.setValueAt(1, 1, 2);
   a.setValueAt(1, 0, 0);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::reverseMovement(b, Up);
+  Utils::reverseMovement(b, Direction::Up);
   a.setValueAt(0, 0, 0);
   a.setValueAt(1, 0, 1);
   EXPECT_EQ(b, a);
@@ -298,14 +276,14 @@ TEST(Utils, reverseMovement_shouldThrow)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
-  EXPECT_THROW(Utils::reverseMovement(a, Left), CoreException);
-  EXPECT_THROW(Utils::reverseMovement(a, Up), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Direction::Left), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Direction::Up), CoreException);
   a.setValueAt(0, 0, 3);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 0);
-  EXPECT_THROW(Utils::reverseMovement(a, Right), CoreException);
-  EXPECT_THROW(Utils::reverseMovement(a, Down), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Direction::Right), CoreException);
+  EXPECT_THROW(Utils::reverseMovement(a, Direction::Down), CoreException);
 }
 
 TEST(Utils, reverseMovement9Puzzle)
@@ -324,22 +302,22 @@ TEST(Utils, reverseMovement9Puzzle)
   a.setValueAt(2, 2, 6);
 
   b = a;
-  Utils::makeMovement(b, Right);
-  Utils::reverseMovement(b, Right);
+  Utils::makeMovement(b, Direction::Right);
+  Utils::reverseMovement(b, Direction::Right);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::makeMovement(b, Left);
-  Utils::reverseMovement(b, Left);
+  Utils::makeMovement(b, Direction::Left);
+  Utils::reverseMovement(b, Direction::Left);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::makeMovement(b, Up);
-  Utils::reverseMovement(b, Up);
+  Utils::makeMovement(b, Direction::Up);
+  Utils::reverseMovement(b, Direction::Up);
   EXPECT_EQ(b, a);
 
   b = a;
-  Utils::makeMovement(b, Down);
-  Utils::reverseMovement(b, Down);
+  Utils::makeMovement(b, Direction::Down);
+  Utils::reverseMovement(b, Direction::Down);
   EXPECT_EQ(b, a);
 }

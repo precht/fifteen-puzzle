@@ -3,11 +3,11 @@
 
 #include <algorithm>
 
-bool Solver::solve(const Board &cInitialBoard, const HeuristicType cType)
+bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
 {
   mInitialBoard = cInitialBoard;
   mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
-  mDistanceType = cType;
+  mDistance = cType;
 
   mResult.clear();
   mVisited.clear();
@@ -19,11 +19,12 @@ bool Solver::solve(const Board &cInitialBoard, const HeuristicType cType)
   if (!Utils::isSolvable(cInitialBoard) || !solve())
     return false;
 
-  State currentState = mVisited.getFirstInserted({mFinalBoard, None});
-  while (currentState.direction != None) {
-    mResult.push_back(currentState.direction);
-    Utils::reverseMovement(currentState.board, currentState.direction);
-    currentState = mVisited.getFirstInserted(currentState);
+  Board board = mFinalBoard;
+  State state = mVisited.getFirstInserted(mFinalBoard);
+  while (state.direction != Direction::None) {
+    mResult.push_back(state.direction);
+    Utils::reverseMovement(board, state.direction);
+    state = mVisited.getFirstInserted(board);
   }
   std::reverse(mResult.begin(), mResult.end());
 

@@ -1,10 +1,7 @@
 #include "utils.h"
-
-#include "board.h"
 #include "coreexception.h"
-
 #include <vector>
-#include <iostream>
+#include <ostream>
 
 bool Utils::isSolvable(const Board &cBoard)
 {
@@ -22,32 +19,16 @@ bool Utils::isSolvable(const Board &cBoard)
     for (uint8_t iFormer = 0; iFormer < iLater; iFormer++) {
       auto former = cBoard.valueAt(iFormer / cBoard.columns(), iFormer % cBoard.columns());
       auto later = cBoard.valueAt(iLater / cBoard.columns(), iLater % cBoard.columns());
-      if (later != 0u && former > later) inversionCount++;
+      if (later != 0 && former > later) inversionCount++;
     }
   }
 
   // https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
-  Position zeroPosition = Utils::getZeroPosition(cBoard);
+  auto zeroPosition = cBoard.getPosition(0);
   if ((cBoard.columns() % 2 == 1) || ((cBoard.rows() - zeroPosition.row) % 2 == 1))
     return inversionCount % 2 == 0;
   else
     return inversionCount % 2 == 1;
-}
-
-// TODO replace all occurrences with Board::getPosition(0)
-Position Utils::getZeroPosition(const Board &cBoard)
-{
-  int zeroCount = 0;
-  Position position = {0, 0};
-  for (uint8_t iRow = 0; iRow < cBoard.rows(); iRow++)
-    for (uint8_t iColumn = 0; iColumn < cBoard.columns(); iColumn++)
-      if (cBoard.valueAt(iRow, iColumn) == 0u) {
-        position = {iRow, iColumn};
-        zeroCount++;
-      }
-  if (zeroCount == 0 || zeroCount > 1)
-    throw CoreException(__FILE__, __LINE__);
-  return position;
 }
 
 Board Utils::constructFinalBoard(const uint8_t cRows, const uint8_t cColumns)
@@ -66,28 +47,28 @@ Board Utils::constructFinalBoard(const uint8_t cRows, const uint8_t cColumns)
 std::vector<Direction> Utils::generatePossibleDirections(const Board &cBoard)
 {
   std::vector<Direction> possibleDirections;
-  Position zero = Utils::getZeroPosition(cBoard);
+  auto zero = cBoard.getPosition(0);
   if (zero.row != 0)
-    possibleDirections.push_back(Down);
+    possibleDirections.push_back(Direction::Down);
   if (zero.row != cBoard.rows() - 1)
-    possibleDirections.push_back(Up);
+    possibleDirections.push_back(Direction::Up);
   if (zero.column != 0)
-    possibleDirections.push_back(Right);
+    possibleDirections.push_back(Direction::Right);
   if (zero.column != cBoard.columns() - 1)
-    possibleDirections.push_back(Left);
+    possibleDirections.push_back(Direction::Left);
   return possibleDirections;
 }
 
 void Utils::makeMovement(Board &board, Direction direction)
 {
-  auto zeroPosition = Utils::getZeroPosition(board);
+  auto zeroPosition = board.getPosition(0);
 
   bool isCorrectDirection = true;
   switch (direction) {
-  case Left: isCorrectDirection = (zeroPosition.column + 1 != board.columns()); break;
-  case Right: isCorrectDirection = (zeroPosition.column != 0); break;
-  case Up: isCorrectDirection = (zeroPosition.row + 1 != board.rows()); break;
-  case Down: isCorrectDirection = (zeroPosition.row != 0); break;
+  case Direction::Left: isCorrectDirection = (zeroPosition.column + 1 != board.columns()); break;
+  case Direction::Right: isCorrectDirection = (zeroPosition.column != 0); break;
+  case Direction::Up: isCorrectDirection = (zeroPosition.row + 1 != board.rows()); break;
+  case Direction::Down: isCorrectDirection = (zeroPosition.row != 0); break;
   default: isCorrectDirection = false;
   }
   if (!isCorrectDirection)
@@ -95,22 +76,22 @@ void Utils::makeMovement(Board &board, Direction direction)
 
   uint8_t value;
   switch (direction) {
-  case Left:
+  case Direction::Left:
     value = board.valueAt(zeroPosition.row, zeroPosition.column + 1);
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row, zeroPosition.column + 1, 0);
     break;
-  case Right:
+  case Direction::Right:
     value = board.valueAt(zeroPosition.row, zeroPosition.column - 1);
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row, zeroPosition.column - 1, 0);
     break;
-  case Up:
+  case Direction::Up:
     value = board.valueAt(zeroPosition.row + 1, zeroPosition.column);
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
     break;
-  case Down:
+  case Direction::Down:
     value = board.valueAt(zeroPosition.row - 1, zeroPosition.column);
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
@@ -123,10 +104,10 @@ void Utils::makeMovement(Board &board, Direction direction)
 void Utils::reverseMovement(Board &board, Direction direction)
 {
   switch (direction) {
-  case Left: direction = Right; break;
-  case Right: direction = Left; break;
-  case Up: direction = Down; break;
-  case Down: direction = Up; break;
+  case Direction::Left: direction = Direction::Right; break;
+  case Direction::Right: direction = Direction::Left; break;
+  case Direction::Up: direction = Direction::Down; break;
+  case Direction::Down: direction = Direction::Up; break;
   default: throw CoreException(__FILE__, __LINE__);
   }
   Utils::makeMovement(board, direction);

@@ -8,7 +8,6 @@ class DfsSolver : public Solver
 {
   std::stack<State> mStack;
 
-private:
   bool solve() override;
 };
 

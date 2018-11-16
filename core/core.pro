@@ -7,6 +7,9 @@ QT -= core gui
 CONFIG += staticlib
 include(../common.pri)
 
+# TODO add to common.pri
+QMAKE_CXXFLAGS += -O2
+
 INCLUDEPATH += include
 
 HEADERS += \

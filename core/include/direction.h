@@ -1,13 +1,20 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 
-#include <string>
+#include <ostream>
 
-enum Direction { Left, Right, Up, Down, None };
-
-struct DirectionToString
+class Direction
 {
-  std::string operator()(const Direction direction) const;
+  uint8_t mType = 4;
+
+public:
+  enum Type { Left = 0, Right = 1, Up = 2, Down = 3, None = 4 };
+
+  Direction() = default;
+  Direction(const Type cType);
+  operator uint8_t() const;
+  operator std::string() const;
+  friend std::ostream& operator<<(std::ostream &stream, const Direction &cDirection);
 };
 
 #endif // DIRECTION_H

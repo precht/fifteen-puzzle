@@ -36,18 +36,18 @@ protected:
 
 TEST_F(HeuristicTest, checkZeroTaxicab)
 {
-  EXPECT_EQ(h(board, expect, ZeroTaxicab), 3);
+  EXPECT_EQ(h(board, expect, Heuristic::ZeroTaxicab), 3);
   EXPECT_EQ(Heuristic::zeroTaxicab(board, expect), 3);
 }
 
 TEST_F(HeuristicTest, checkAllTaxicab)
 {
-  EXPECT_EQ(h(board, expect, AllTaxicab), 6);
+  EXPECT_EQ(h(board, expect, Heuristic::AllTaxicab), 6);
   EXPECT_EQ(Heuristic::allTaxicab(board, expect), 6);
 }
 
 TEST_F(HeuristicTest, checkWrongCount)
 {
-  EXPECT_EQ(h(board, expect, WrongCount), 4);
+  EXPECT_EQ(h(board, expect, Heuristic::WrongCount), 4);
   EXPECT_EQ(Heuristic::wrongCount(board, expect), 4);
 }

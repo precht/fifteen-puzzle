@@ -8,7 +8,6 @@ class BfsSolver : public Solver
 {
   std::queue<State> mQueue;
 
-private:
   bool solve() override;
 };
 

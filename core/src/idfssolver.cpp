@@ -3,41 +3,55 @@
 
 bool IdfsSolver::solve()
 {
-  for (int64_t iCost = 1; iCost < cPathLenghtLimit; iCost++) {
+  for (int iDepth = 1; iDepth < cDepthLimit; iDepth++) {
     mStack = {};
     mVisited.clear();
-
-    State currentState = { mInitialBoard, None };
-    mVisited.insert(currentState);
+    Board board = mInitialBoard;
+    IdfsState state = { mInitialBoard };
+    mVisited.insert(mInitialBoard);
 
     auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
     for (auto &direction : possibleDirections) {
-      currentState.direction = direction;
-      mStack.push(currentState);
+      state.direction = direction;
+      mStack.push(state);
     }
 
     while (!mStack.empty()) {
-      currentState = mStack.top();
+      state = mStack.top();
       mStack.pop();
       mCheckedStates++;
 
-      Utils::makeMovement(currentState.board, currentState.direction);
-      mVisited.insert(currentState);
+      board.setMemory(state.memory);
+      Utils::makeMovement(board, state.direction);
+      state.memory = board.memory();
 
-      if (currentState.board == mFinalBoard)
+      if (mVisited.find(board))
+        continue;
+      mVisited.insert(state);
+
+      if (board == mFinalBoard)
         return true;
 
-      currentState.visitedCost++;
-      if (currentState.visitedCost >= iCost)
+      state.depth++;
+      if (state.depth >= iDepth)
         continue;
 
-      possibleDirections = Utils::generatePossibleDirections(currentState.board);
+      possibleDirections = Utils::generatePossibleDirections(board);
       for (auto &direction : possibleDirections) {
-        currentState.direction = direction;
-        mStack.push(currentState);
+        state.direction = direction;
+        mStack.push(state);
       }
     }
   }
 
   return false;
+}
+
+IdfsSolver::IdfsState::IdfsState(const Board &cBoard)
+  : memory(cBoard.memory())
+{ }
+
+IdfsSolver::IdfsState::operator State() const
+{
+  return { memory, direction };
 }

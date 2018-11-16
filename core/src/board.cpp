@@ -4,7 +4,7 @@
 #include <vector>
 
 Board::Board()
-  : mRows(0), mColumns(0), mMemory(0)
+    : mRows(0), mColumns(0), mMemory(0)
 { }
 
 Board::Board(const uint8_t cRows, const uint8_t cColumns)
@@ -34,6 +34,11 @@ uint64_t Board::memory() const
   return mMemory;
 }
 
+void Board::setMemory(const uint64_t &memory)
+{
+    mMemory = memory;
+}
+
 uint8_t Board::valueAt(const uint8_t cRow, const uint8_t cColumn) const
 {
   if (cRow >= mRows || cColumn >= mColumns)
@@ -61,7 +66,7 @@ void Board::setValueAt(const Position cPosition, const uint8_t cValue)
   setValueAt(cPosition.row, cPosition.column, cValue);
 }
 
-Position Board::getPosition(const uint8_t cValue) const
+Board::Position Board::getPosition(const uint8_t cValue) const
 {
   for (uint8_t iRow = 0; iRow < mRows; iRow++)
     for (uint8_t iColumn = 0; iColumn < mColumns; iColumn++)

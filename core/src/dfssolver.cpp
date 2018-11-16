@@ -4,32 +4,36 @@
 bool DfsSolver::solve()
 {
   mStack = {};
-  State currentState = {mInitialBoard, None};
-  mVisited.insert(currentState);
+  Board board = mInitialBoard;
+  State state = { mInitialBoard };
+  mVisited.insert(mInitialBoard);
 
   auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
   for (auto &direction : possibleDirections) {
-    currentState.direction = direction;
-    mStack.push(currentState);
+    state.direction = direction;
+    mStack.push(state);
   }
 
   while (!mStack.empty()) {
-    currentState = mStack.top();
+    state = mStack.top();
     mStack.pop();
     mCheckedStates++;
 
-    Utils::makeMovement(currentState.board, currentState.direction);
-    if (mVisited.find(currentState))
-      continue;
-    mVisited.insert(currentState);
+    board.setMemory(state.memory);
+    Utils::makeMovement(board, state.direction);
+    state.memory = board.memory();
 
-    if (currentState.board == mFinalBoard)
+    if (mVisited.find(board))
+      continue;
+    mVisited.insert(state);
+
+    if (board == mFinalBoard)
       return true;
 
-    possibleDirections = Utils::generatePossibleDirections(currentState.board);
+    possibleDirections = Utils::generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
-      currentState.direction = direction;
-      mStack.push(currentState);
+      state.direction = direction;
+      mStack.push(state);
     }
   }
 

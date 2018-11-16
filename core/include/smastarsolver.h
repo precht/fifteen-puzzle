@@ -5,7 +5,7 @@
 
 class SmaStarSolver : public Solver
 {
-private:
+
   bool solve();
 };
 

@@ -2,14 +2,25 @@
 #define IDFSSOLVER_H
 
 #include "solver.h"
+#include "board.h"
+#include "direction.h"
 #include <stack>
 
 class IdfsSolver : public Solver
 {
-  std::stack<State> mStack;
-  int64_t cPathLenghtLimit = 1.31e12;
+  struct IdfsState
+  {
+    uint64_t memory;
+    Direction direction;
+    int depth = 0;
 
-private:
+    IdfsState(const Board &cBoard);
+    operator State() const;
+  };
+
+  std::stack<IdfsState> mStack;
+  int cDepthLimit = 2e8;
+
   bool solve() override;
 };
 

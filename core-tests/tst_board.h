@@ -73,3 +73,14 @@ TEST(Board, compareBoardsAndHashes_shouldBeDifferent) {
   EXPECT_NE(b, c);
   EXPECT_NE(b.memory(), c.memory());
 }
+
+TEST(Board, getPosition_shouldPass)
+{
+  Board a(2, 2);
+  a.setValueAt(0, 0, 3);
+  a.setValueAt(0, 1, 0);
+  a.setValueAt(1, 0, 1);
+  a.setValueAt(1, 1, 2);
+  EXPECT_EQ(a.getPosition(0).row, 0);
+  EXPECT_EQ(a.getPosition(0).column, 1);
+}

@@ -15,10 +15,10 @@ protected:
   History mVisited;
   std::vector<Direction> mResult;
   uint64_t mCheckedStates = 0;
-  HeuristicType mDistanceType = WrongCount;
+  Heuristic::Type mDistance = Heuristic::WrongCount;
 
 public:
-  bool solve(const Board &cInitialBoard, const HeuristicType cType = WrongCount);
+  bool solve(const Board &cInitialBoard, const Heuristic::Type cType = Heuristic::WrongCount);
   std::vector<Direction> result() const;
   uint64_t checkedStates() const;
 

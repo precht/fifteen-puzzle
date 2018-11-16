@@ -4,32 +4,36 @@
 bool BfsSolver::solve()
 {
   mQueue = {};
-  State currentState = {mInitialBoard, None};
-  mVisited.insert(currentState);
+  Board board = mInitialBoard;
+  State state { mInitialBoard };
+  mVisited.insert(mInitialBoard);
 
   auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
   for (auto &direction : possibleDirections) {
-    currentState.direction = direction;
-    mQueue.push(currentState);
+    state.direction = direction;
+    mQueue.push(state);
   }
 
   while (!mQueue.empty()) {
-    currentState = mQueue.front();
+    state = mQueue.front();
     mQueue.pop();
     mCheckedStates++;
 
-    Utils::makeMovement(currentState.board, currentState.direction);
-    if (mVisited.find(currentState))
-      continue;
-    mVisited.insert(currentState);
+    board.setMemory(state.memory);
+    Utils::makeMovement(board, state.direction);
+    state.memory = board.memory();
 
-    if (currentState.board == mFinalBoard)
+    if (mVisited.find(board))
+      continue;
+    mVisited.insert(state);
+
+    if (board == mFinalBoard)
       return true;
 
-    possibleDirections = Utils::generatePossibleDirections(currentState.board);
+    possibleDirections = Utils::generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
-      currentState.direction = direction;
-      mQueue.push(currentState);
+      state.direction = direction;
+      mQueue.push(state);
     }
   }
 

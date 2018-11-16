@@ -4,36 +4,54 @@
 bool BestFirstSolver::solve()
 {
   mPriorityQueue = {};
-  State currentState = {mInitialBoard, None};
-  currentState.estimatedTotalCost = mHeuristic(mInitialBoard, mFinalBoard, mDistanceType);
-  mVisited.insert(currentState);
+  Board board = mInitialBoard;
+  BFState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
+  mVisited.insert(mInitialBoard);
 
   auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
   for (auto &direction : possibleDirections) {
-    currentState.direction = direction;
-    mPriorityQueue.push(currentState);
+    state.direction = direction;
+    mPriorityQueue.push(state);
   }
 
   while (!mPriorityQueue.empty()) {
-    currentState = mPriorityQueue.top();
+    state = mPriorityQueue.top();
     mPriorityQueue.pop();
     mCheckedStates++;
 
-    Utils::makeMovement(currentState.board, currentState.direction);
-    currentState.estimatedTotalCost = mHeuristic(currentState.board, mFinalBoard, mDistanceType);
-    if (mVisited.find(currentState))
-      continue;
-    mVisited.insert(currentState);
+    board.setMemory(state.memory);
+    Utils::makeMovement(board, state.direction);
+    state.memory = board.memory();
 
-    if (currentState.board == mFinalBoard)
+    if (mVisited.find(board))
+      continue;
+    mVisited.insert(state);
+
+    if (board == mFinalBoard)
       return true;
 
-    possibleDirections = Utils::generatePossibleDirections(currentState.board);
+    state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
+
+    possibleDirections = Utils::generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
-      currentState.direction = direction;
-      mPriorityQueue.push(currentState);
+      state.direction = direction;
+      mPriorityQueue.push(state);
     }
   }
 
   return false;
+}
+
+BestFirstSolver::BFState::BFState(const Board &cBoard, const uint8_t cEstimatedCost)
+  : memory(cBoard.memory()), estimatedCost(cEstimatedCost)
+{ }
+
+BestFirstSolver::BFState::operator State() const
+{
+  return { memory, direction };
+}
+
+bool BestFirstSolver::Greater::operator()(const BFState &cLhs, const BFState &cRhs) const
+{
+  return (cLhs.estimatedCost > cRhs.estimatedCost);
 }
