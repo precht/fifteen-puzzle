@@ -6,7 +6,7 @@ class Board;
 
 struct Heuristic
 {
-  enum Type { WrongCount, ZeroTaxicab, AllTaxicab};
+  enum Type { WrongCount, ZeroTaxicab, AllTaxicab };
 
   uint8_t operator()(const Board &cLhs, const Board &cRhs, const Type cType) const;
   static uint8_t wrongCount(const Board& cLhs, const Board &cRhs);

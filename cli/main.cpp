@@ -7,34 +7,60 @@
 
 using namespace std;
 
+#include <limits>
+#include <climits>
+#include <unordered_map>
+#include <map>
+
 int main()
 {
   freopen("input", "r", stdin);
 
-  try {
-    Board board(4, 4);
-    board.setValueAt(0, 0, 13);
-    board.setValueAt(0, 1, 2);
-    board.setValueAt(0, 2, 10);
-    board.setValueAt(0, 3, 3);
+//  try {
+    Board b2 = Board(4, 4);
+    b2.setValueAt(0, 0, 5);
+    b2.setValueAt(0, 1, 1);
+    b2.setValueAt(0, 2, 2);
+    b2.setValueAt(0, 3, 3);
 
-    board.setValueAt(1, 0, 1);
-    board.setValueAt(1, 1, 12);
-    board.setValueAt(1, 2, 8);
-    board.setValueAt(1, 3, 4);
+    b2.setValueAt(1, 0, 9);
+    b2.setValueAt(1, 1, 10);
+    b2.setValueAt(1, 2, 6);
+    b2.setValueAt(1, 3, 4);
 
-    board.setValueAt(2, 0, 5);
-    board.setValueAt(2, 1, 0);
-    board.setValueAt(2, 2, 9);
-    board.setValueAt(2, 3, 6);
+    b2.setValueAt(2, 0, 13);
+    b2.setValueAt(2, 1, 0);
+    b2.setValueAt(2, 2, 7);
+    b2.setValueAt(2, 3, 8);
 
-    board.setValueAt(3, 0, 15);
-    board.setValueAt(3, 1, 14);
-    board.setValueAt(3, 2, 11);
-    board.setValueAt(3, 3, 7);
+    b2.setValueAt(3, 0, 14);
+    b2.setValueAt(3, 1, 15);
+    b2.setValueAt(3, 2, 11);
+    b2.setValueAt(3, 3, 12);
 
-    Solver *solver = new DfsSolver();
-    cout << "Is solvable: " << solver->solve(board) << "\nResult:\n";
+    Board b4 = Board(4, 4);
+    b4.setValueAt(0, 0, 1);
+    b4.setValueAt(0, 1, 2);
+    b4.setValueAt(0, 2, 3);
+    b4.setValueAt(0, 3, 4);
+
+    b4.setValueAt(1, 0, 5);
+    b4.setValueAt(1, 1, 6);
+    b4.setValueAt(1, 2, 7);
+    b4.setValueAt(1, 3, 8);
+
+    b4.setValueAt(2, 0, 9);
+    b4.setValueAt(2, 1, 10);
+    b4.setValueAt(2, 2, 11);
+    b4.setValueAt(2, 3, 12);
+
+    b4.setValueAt(3, 0, 13);
+    b4.setValueAt(3, 1, 0);
+    b4.setValueAt(3, 2, 14);
+    b4.setValueAt(3, 3, 15);
+
+    Solver *solver = new SmaStarSolver();
+    cout << "Is solvable: " << solver->solve(b2) << endl; //"\nResult:\n";
     for (auto &a : solver->result()) {
       std::string s = a;
       cout << s << " ";
@@ -42,9 +68,9 @@ int main()
     cout << '\n';
     cout << "Result: " << solver->result().size() << '\n';
     cout << "Checked: " << solver->checkedStates() << '\n';
-  }
-  catch(const CoreException &exception) {
-      std::cerr << exception.what() << std::endl;
-  }
+//  }
+//  catch(const CoreException &exception) {
+//      std::cerr << exception.what() << std::endl;
+//  }
   return 0;
 }

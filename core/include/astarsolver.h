@@ -11,11 +11,11 @@ public:
   {
     uint64_t memory = 0;
     Direction direction;
-    unsigned estimatedTotalCost = 0;
-    unsigned visitedCost = 0;
+    uint32_t estimatedCost = 0;
+    uint32_t depth = 0;
 
     AState() = default;
-    AState(const Board &cBoard, const int cEstimatedTotalCost);
+    AState(const Board &cBoard, const uint32_t cEstimatedCost);
     operator State() const;
   };
 
@@ -28,7 +28,7 @@ private:
   std::priority_queue<AState, std::vector<AState>, Greater> mPriorityQueue;
   Heuristic mHeuristic;
 
-  bool solve();
+  bool solve() override;
 };
 
 #endif // ASTARSOLVER_H

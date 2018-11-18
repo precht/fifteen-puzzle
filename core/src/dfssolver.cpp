@@ -30,8 +30,11 @@ bool DfsSolver::solve()
     if (board == mFinalBoard)
       return true;
 
+    const Direction currentDirection = state.direction;
     possibleDirections = Utils::generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
+      if (Direction::isReverseDirection(direction, currentDirection))
+        continue;
       state.direction = direction;
       mStack.push(state);
     }

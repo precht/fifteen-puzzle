@@ -42,8 +42,8 @@ TEST_F(HeuristicTest, checkZeroTaxicab)
 
 TEST_F(HeuristicTest, checkAllTaxicab)
 {
-  EXPECT_EQ(h(board, expect, Heuristic::AllTaxicab), 6);
-  EXPECT_EQ(Heuristic::allTaxicab(board, expect), 6);
+  EXPECT_EQ(h(board, expect, Heuristic::AllTaxicab), 3);
+  EXPECT_EQ(Heuristic::allTaxicab(board, expect), 3);
 }
 
 TEST_F(HeuristicTest, checkWrongCount)

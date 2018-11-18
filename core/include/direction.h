@@ -15,6 +15,7 @@ public:
   operator uint8_t() const;
   operator std::string() const;
   friend std::ostream& operator<<(std::ostream &stream, const Direction &cDirection);
+  static bool isReverseDirection(const Direction &cLhs, const Direction &cRhs);
 };
 
 #endif // DIRECTION_H

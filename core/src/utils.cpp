@@ -14,7 +14,7 @@ bool Utils::isSolvable(const Board &cBoard)
     if (!isValue[index])
       return false;
 
-  int inversionCount = 0;
+  uint32_t inversionCount = 0;
   for (uint8_t iLater = 1; iLater < cBoard.size(); iLater++) {
     for (uint8_t iFormer = 0; iFormer < iLater; iFormer++) {
       auto former = cBoard.valueAt(iFormer / cBoard.columns(), iFormer % cBoard.columns());
@@ -72,7 +72,7 @@ void Utils::makeMovement(Board &board, Direction direction)
   default: isCorrectDirection = false;
   }
   if (!isCorrectDirection)
-    throw CoreException(__FILE__, __LINE__);
+    throw CoreException(__FILE__, __LINE__, direction);
 
   uint8_t value;
   switch (direction) {

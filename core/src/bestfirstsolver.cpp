@@ -32,8 +32,11 @@ bool BestFirstSolver::solve()
 
     state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
 
+    const Direction currentDirection = state.direction;
     possibleDirections = Utils::generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
+      if (Direction::isReverseDirection(direction, currentDirection))
+        continue;
       state.direction = direction;
       mPriorityQueue.push(state);
     }

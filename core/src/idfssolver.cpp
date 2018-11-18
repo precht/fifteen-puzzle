@@ -3,7 +3,7 @@
 
 bool IdfsSolver::solve()
 {
-  for (int iDepth = 1; iDepth < cDepthLimit; iDepth++) {
+  for (uint32_t iDepth = 1; iDepth < cDepthLimit; iDepth++) {
     mStack = {};
     mVisited.clear();
     Board board = mInitialBoard;
@@ -36,8 +36,11 @@ bool IdfsSolver::solve()
       if (state.depth >= iDepth)
         continue;
 
+      const Direction currentDirection = state.direction;
       possibleDirections = Utils::generatePossibleDirections(board);
       for (auto &direction : possibleDirections) {
+        if (Direction::isReverseDirection(direction, currentDirection))
+          continue;
         state.direction = direction;
         mStack.push(state);
       }

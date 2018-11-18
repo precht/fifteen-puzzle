@@ -117,12 +117,105 @@ protected:
   void check()
   {
     ASSERT_TRUE(solver->solve(board));
-    for (auto &d : solver->result())
-      Utils::makeMovement(board, d);
+    try {
+      for (auto &d : solver->result())
+        Utils::makeMovement(board, d);
+    } catch (CoreException &e) {
+      ASSERT_FALSE(true); // failed to make movement, wrong result!
+    }
     EXPECT_EQ(board, Utils::constructFinalBoard(board.rows(), board.columns()));
     std::cout << "checkedStates: " << solver->checkedStates() << "\n";
   }
 };
+
+TEST_F(Solvers, checkBestFirst_comparator)
+{
+  using T = BestFirstSolver::BFState;
+  using C = BestFirstSolver::Greater;
+  std::priority_queue<T, std::vector<T>, C> pq;
+  T a, b, c;
+  a.estimatedCost = 1;
+  b.estimatedCost = 2;
+  c.estimatedCost = 3;
+  pq.push(b);
+  pq.push(a);
+  pq.push(b);
+  pq.push(c);
+  EXPECT_EQ(pq.top().estimatedCost, 1u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 2u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 2u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 3u);
+  pq.pop();
+}
+
+TEST_F(Solvers, checkAStar_comparator)
+{
+  using T = AStarSolver::AState;
+  using C = AStarSolver::Greater;
+  std::priority_queue<T, std::vector<T>, C> pq;
+  T a, b, c;
+  a.estimatedCost = 1;
+  b.estimatedCost = 2;
+  c.estimatedCost = 3;
+  pq.push(b);
+  pq.push(a);
+  pq.push(b);
+  pq.push(c);
+  EXPECT_EQ(pq.top().estimatedCost, 1u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 2u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 2u);
+  pq.pop();
+  EXPECT_EQ(pq.top().estimatedCost, 3u);
+  pq.pop();
+}
+
+TEST_F(Solvers, checkSmaStar_comparator)
+{
+  using T = SmaStarSolver::SetState;
+  using C = SmaStarSolver::Less;
+  std::set<T, C> set;
+  T a, b, c, d, e;
+  a.depth = 1;
+  a.estimatedCost = 1;
+  b.depth = 2;
+  b.estimatedCost = 1;
+  c.depth = 3;
+  c.estimatedCost = 1;
+  d.depth = 1;
+  d.estimatedCost = 2;
+  e.depth = 2;
+  e.estimatedCost = 2;
+  set.insert(a);
+  set.insert(b);
+  b.memory = 1u;
+  set.insert(b);
+  set.insert(c);
+  set.insert(d);
+  set.insert(e);
+  auto it = set.begin();
+  EXPECT_EQ(it->estimatedCost, 1u);
+  EXPECT_EQ(it->depth, 3u);
+  ++it;
+  EXPECT_EQ(it->estimatedCost, 1u);
+  EXPECT_EQ(it->depth, 2u);
+  ++it;
+  EXPECT_EQ(it->estimatedCost, 1u);
+  EXPECT_EQ(it->depth, 2u);
+  ++it;
+  EXPECT_EQ(it->estimatedCost, 1u);
+  EXPECT_EQ(it->depth, 1u);
+  ++it;
+  EXPECT_EQ(it->estimatedCost, 2u);
+  EXPECT_EQ(it->depth, 2u);
+  ++it;
+  EXPECT_EQ(it->estimatedCost, 2u);
+  EXPECT_EQ(it->depth, 1u);
+}
 
 TEST_F(Solvers, checkBfs_board3x3)
 {
@@ -219,50 +312,4 @@ TEST_F(Solvers, checkSmaStar_board4x4)
   SmaStarSolver s;
   solver = &s;
   check();
-}
-
-TEST_F(Solvers, checkBestFirst_comparator)
-{
-  using T = BestFirstSolver::BFState;
-  using C = BestFirstSolver::Greater;
-  std::priority_queue<T, std::vector<T>, C> pq;
-  T a, b, c;
-  a.estimatedCost = 1;
-  b.estimatedCost = 2;
-  c.estimatedCost = 3;
-  pq.push(b);
-  pq.push(a);
-  pq.push(b);
-  pq.push(c);
-  EXPECT_EQ(pq.top().estimatedCost, 1);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedCost, 2);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedCost, 2);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedCost, 3);
-  pq.pop();
-}
-
-TEST_F(Solvers, checkAStar_comparator)
-{
-  using T = AStarSolver::AState;
-  using C = AStarSolver::Greater;
-  std::priority_queue<T, std::vector<T>, C> pq;
-  T a, b, c;
-  a.estimatedTotalCost = 1;
-  b.estimatedTotalCost = 2;
-  c.estimatedTotalCost = 3;
-  pq.push(b);
-  pq.push(a);
-  pq.push(b);
-  pq.push(c);
-  EXPECT_EQ(pq.top().estimatedTotalCost, 1u);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedTotalCost, 2u);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedTotalCost, 2u);
-  pq.pop();
-  EXPECT_EQ(pq.top().estimatedTotalCost, 3u);
-  pq.pop();
 }

@@ -19,6 +19,12 @@ bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
   if (!Utils::isSolvable(cInitialBoard) || !solve())
     return false;
 
+  storeResult();
+  return true;
+}
+
+void Solver::storeResult()
+{
   Board board = mFinalBoard;
   State state = mVisited.getFirstInserted(mFinalBoard);
   while (state.direction != Direction::None) {
@@ -27,8 +33,6 @@ bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
     state = mVisited.getFirstInserted(board);
   }
   std::reverse(mResult.begin(), mResult.end());
-
-  return true;
 }
 
 std::vector<Direction> Solver::result() const

@@ -8,7 +8,7 @@ CONFIG += staticlib
 include(../common.pri)
 
 # TODO add to common.pri
-QMAKE_CXXFLAGS += -O2
+#QMAKE_CXXFLAGS += -O2
 
 INCLUDEPATH += include
 

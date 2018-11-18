@@ -11,6 +11,11 @@ bool History::find(const State &cState) const
   return (mVisited.find(cState) != mVisited.end());
 }
 
+void History::erase(const State &cState)
+{
+  mVisited.erase(cState);
+}
+
 State History::getFirstInserted(const State &cState) const
 {
   auto ptr = mVisited.find(cState);

@@ -44,7 +44,10 @@ uint8_t Heuristic::allTaxicab(const Board &cLhs, const Board &cRhs)
   uint8_t distance = 0;
   for (uint8_t iRow = 0; iRow < cLhs.rows(); iRow++) {
     for (uint8_t iColumn = 0; iColumn < cLhs.columns(); iColumn++) {
-      auto rhsPosition = cRhs.getPosition(cLhs.valueAt(iRow, iColumn));
+      const uint8_t lhsValue = cLhs.valueAt(iRow, iColumn);
+      if (lhsValue == 0u)
+        continue;
+      auto rhsPosition = cRhs.getPosition(lhsValue);
       distance += abs(rhsPosition.row - iRow) + abs(rhsPosition.column - iColumn);
     }
   }

@@ -8,18 +8,20 @@
 
 class IdfsSolver : public Solver
 {
+public:
   struct IdfsState
   {
     uint64_t memory;
     Direction direction;
-    int depth = 0;
+    uint32_t depth = 0;
 
     IdfsState(const Board &cBoard);
     operator State() const;
   };
 
+private:
   std::stack<IdfsState> mStack;
-  int cDepthLimit = 2e8;
+  uint32_t cDepthLimit = 2e8;
 
   bool solve() override;
 };

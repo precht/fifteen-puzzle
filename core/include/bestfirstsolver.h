@@ -29,7 +29,7 @@ private:
   std::priority_queue<BFState, std::vector<BFState>, Greater> mPriorityQueue;
   Heuristic mHeuristic;
 
-  bool solve();
+  bool solve() override;
 };
 
 #endif // BESTFIRSTSOLVER_H

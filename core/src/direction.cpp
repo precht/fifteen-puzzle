@@ -25,3 +25,14 @@ std::ostream& operator<<(std::ostream &stream, const Direction &cDirection)
   stream << std::string(cDirection);
   return stream;
 }
+
+bool Direction::isReverseDirection(const Direction &cLhs, const Direction &cRhs)
+{
+  switch (cLhs) {
+  case Left: return cRhs == Right;
+  case Right: return cRhs == Left;
+  case Up: return cRhs == Down;
+  case Down: return cRhs == Up;
+  default: return false;
+  }
+}
