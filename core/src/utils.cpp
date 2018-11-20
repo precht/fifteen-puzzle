@@ -44,21 +44,6 @@ Board Utils::constructFinalBoard(const uint8_t cRows, const uint8_t cColumns)
   return board;
 }
 
-std::vector<Direction> Utils::generatePossibleDirections(const Board &cBoard)
-{
-  std::vector<Direction> possibleDirections;
-  auto zero = cBoard.getPosition(0);
-  if (zero.row != 0)
-    possibleDirections.push_back(Direction::Down);
-  if (zero.row != cBoard.rows() - 1)
-    possibleDirections.push_back(Direction::Up);
-  if (zero.column != 0)
-    possibleDirections.push_back(Direction::Right);
-  if (zero.column != cBoard.columns() - 1)
-    possibleDirections.push_back(Direction::Left);
-  return possibleDirections;
-}
-
 void Utils::makeMovement(Board &board, Direction direction)
 {
   auto zeroPosition = board.getPosition(0);

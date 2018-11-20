@@ -10,7 +10,7 @@ bool IdfsSolver::solve()
     IdfsState state = { mInitialBoard };
     mVisited.insert(mInitialBoard);
 
-    auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
+    auto possibleDirections = generatePossibleDirections(mInitialBoard);
     for (auto &direction : possibleDirections) {
       state.direction = direction;
       mStack.push(state);
@@ -25,7 +25,7 @@ bool IdfsSolver::solve()
       Utils::makeMovement(board, state.direction);
       state.memory = board.memory();
 
-      if (mVisited.find(board))
+      if (mVisited.find(board) != mVisited.end())
         continue;
       mVisited.insert(state);
 
@@ -37,7 +37,7 @@ bool IdfsSolver::solve()
         continue;
 
       const Direction currentDirection = state.direction;
-      possibleDirections = Utils::generatePossibleDirections(board);
+      possibleDirections = generatePossibleDirections(board);
       for (auto &direction : possibleDirections) {
         if (Direction::isReverseDirection(direction, currentDirection))
           continue;

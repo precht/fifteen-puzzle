@@ -5,7 +5,6 @@
 #include "board.h"
 #include "direction.h"
 #include "state.h"
-#include "history.h"
 #include "utils.h"
 #include "solver.h"
 #include "dfssolver.h"

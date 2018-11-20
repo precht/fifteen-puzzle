@@ -8,7 +8,7 @@ bool BestFirstSolver::solve()
   BFState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
   mVisited.insert(mInitialBoard);
 
-  auto possibleDirections = Utils::generatePossibleDirections(mInitialBoard);
+  auto possibleDirections = generatePossibleDirections(mInitialBoard);
   for (auto &direction : possibleDirections) {
     state.direction = direction;
     mPriorityQueue.push(state);
@@ -23,7 +23,7 @@ bool BestFirstSolver::solve()
     Utils::makeMovement(board, state.direction);
     state.memory = board.memory();
 
-    if (mVisited.find(board))
+    if (mVisited.find(board) != mVisited.end())
       continue;
     mVisited.insert(state);
 
@@ -33,7 +33,7 @@ bool BestFirstSolver::solve()
     state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
 
     const Direction currentDirection = state.direction;
-    possibleDirections = Utils::generatePossibleDirections(board);
+    possibleDirections = generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
       if (Direction::isReverseDirection(direction, currentDirection))
         continue;

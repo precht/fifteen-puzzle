@@ -7,15 +7,11 @@ QT -= core gui
 CONFIG += staticlib
 include(../common.pri)
 
-# TODO add to common.pri
-#QMAKE_CXXFLAGS += -O2
-
 INCLUDEPATH += include
 
 HEADERS += \
     include/board.h \
     include/direction.h \
-    include/history.h \
     include/coreexception.h \
     include/state.h \
     include/utils.h \
@@ -31,7 +27,6 @@ HEADERS += \
 
 SOURCES += \
     src/board.cpp \
-    src/history.cpp \
     src/state.cpp \
     src/utils.cpp \
     src/direction.cpp \

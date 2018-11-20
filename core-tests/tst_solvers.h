@@ -125,6 +125,7 @@ protected:
     }
     EXPECT_EQ(board, Utils::constructFinalBoard(board.rows(), board.columns()));
     std::cout << "checkedStates: " << solver->checkedStates() << "\n";
+    std::cout << "resultLenght: " << solver->result().size() << "\n";
   }
 };
 
@@ -241,7 +242,7 @@ TEST_F(Solvers, checkDfs_board3x3)
   check();
 }
 
-// // Too complex board for dfs - takes a lot of time
+// // Too complex board for dfs - takes a lot of time, test timeout
 //TEST_F(Solvers, checkDfs_board4x4)
 //{
 //  board = b2;

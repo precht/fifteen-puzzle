@@ -1,7 +1,15 @@
 #include "solver.h"
 #include "utils.h"
-
+#include <cassert>
 #include <algorithm>
+#include <random>
+#include <chrono>
+
+Solver::Solver()
+{
+  std::random_device rd;
+  mRandomGenerator = std::mt19937(rd());
+}
 
 bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
 {
@@ -26,11 +34,13 @@ bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
 void Solver::storeResult()
 {
   Board board = mFinalBoard;
-  State state = mVisited.getFirstInserted(mFinalBoard);
+  assert(mVisited.find(mFinalBoard) != mVisited.end());
+  State state = *(mVisited.find(mFinalBoard));
   while (state.direction != Direction::None) {
     mResult.push_back(state.direction);
     Utils::reverseMovement(board, state.direction);
-    state = mVisited.getFirstInserted(board);
+    assert(mVisited.find(board) != mVisited.end());
+    state = *(mVisited.find(board));
   }
   std::reverse(mResult.begin(), mResult.end());
 }
@@ -44,3 +54,57 @@ uint64_t Solver::checkedStates() const
 {
   return mCheckedStates;
 }
+
+std::vector<Direction> Solver::generatePossibleDirections(const Board &cBoard)
+{
+  std::vector<Direction> possibleDirections;
+  auto zero = cBoard.getPosition(0);
+  if (mOrder.empty()) {
+    if (zero.row != 0)
+      possibleDirections.push_back(Direction::Down);
+    if (zero.row != cBoard.rows() - 1)
+      possibleDirections.push_back(Direction::Up);
+    if (zero.column != 0)
+      possibleDirections.push_back(Direction::Right);
+    if (zero.column != cBoard.columns() - 1)
+      possibleDirections.push_back(Direction::Left);
+    return possibleDirections;
+  }
+
+  if (mIsRandomOrder)
+    std::shuffle(mOrder.begin(), mOrder.end(), mRandomGenerator);
+
+  for (auto &x : mOrder) {
+    if (x == Direction::Down) {
+      if (zero.row != 0)
+        possibleDirections.push_back(x);
+    } else if (x == Direction::Up) {
+      if (zero.row != cBoard.rows() - 1)
+        possibleDirections.push_back(x);
+    } else if (x == Direction::Right) {
+      if (zero.column != 0)
+        possibleDirections.push_back(x);
+    } else if (x == Direction::Left) {
+      if (zero.column != cBoard.columns() - 1)
+        possibleDirections.push_back(x);
+    }
+  }
+  return possibleDirections;
+}
+
+bool Solver::solve()
+{
+  return false;
+}
+
+void Solver::setOrder(const std::vector<Direction> &order)
+{
+  mOrder = order;
+}
+
+void Solver::randomOrder(bool isRandomOrder)
+{
+  mOrder = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
+  mIsRandomOrder = isRandomOrder;
+}
+

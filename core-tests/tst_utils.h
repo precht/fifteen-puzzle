@@ -7,6 +7,7 @@ using namespace testing;
 
 #include "utils.h"
 #include "board.h"
+#include "solver.h"
 #include "coreexception.h"
 
 #include <algorithm>
@@ -114,7 +115,8 @@ TEST(Utils, generatePossibleDirection_zeroIsInCerter)
   a.setValueAt(2, 0, 6);
   a.setValueAt(2, 1, 7);
   a.setValueAt(2, 2, 8);
-  auto d = Utils::generatePossibleDirections(a);
+  Solver solver;
+  auto d = solver.generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 4u);
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Left) != d.end());
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Right) != d.end());
@@ -129,7 +131,8 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInUpLeftCorner)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
-  auto d = Utils::generatePossibleDirections(a);
+  Solver solver;
+  auto d = solver.generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Up) != d.end());
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Left) != d.end());
@@ -142,7 +145,8 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInDownRightCorner)
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 0);
-  auto d = Utils::generatePossibleDirections(a);
+  Solver solver;
+  auto d = solver.generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Down) != d.end());
   EXPECT_TRUE(std::find(d.begin(), d.end(), Direction::Right) != d.end());

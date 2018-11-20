@@ -32,7 +32,8 @@ bool SmaStarSolver::solve()
     SetState setState = *(mSet.begin());
     assert((mGraph.find(setState.memory) != mGraph.end()));
     GraphState &graphState = mGraph[setState.memory];
-//    std::cout<< ">>> Node: " << mIds[setState.memory] << " " << graphState.direction << std::endl;
+//    std::cout<< ">>> Node: " << mIds[setState.memory] << " "
+//             << graphState.direction << std::endl;
 //    print();
     board.setMemory(setState.memory);
 
@@ -61,7 +62,7 @@ bool SmaStarSolver::solve()
 
     // insert new nodes
     board.setMemory(setState.memory);
-    auto possibleDirections = Utils::generatePossibleDirections(board);
+    auto possibleDirections = generatePossibleDirections(board);
     for (auto &direction : possibleDirections) {
       board.setMemory(setState.memory);
       Utils::makeMovement(board, direction);
@@ -156,7 +157,8 @@ void SmaStarSolver::update(const SetState &setState)
       cannotBeDeleted |= x.second;
       if (mGraph.find(x.first) != mGraph.end()) {
         assert(mGraph.find(x.first) != mGraph.end());
-        iGraphState.estimatedCost = std::min(iGraphState.estimatedCost, mGraph[x.first].estimatedCost);
+        iGraphState.estimatedCost = std::min(iGraphState.estimatedCost,
+                                             mGraph[x.first].estimatedCost);
       }
     }
 

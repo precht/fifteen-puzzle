@@ -1,76 +1,204 @@
 #include <iostream>
-#include <cstdint>
-#include <bitset>
-#include <string>
+#include <cstring>
+#include <cassert>
+#include <chrono>
 
 #include "core.h"
 
 using namespace std;
 
-#include <limits>
-#include <climits>
-#include <unordered_map>
-#include <map>
-
-int main()
+struct Config
 {
-  freopen("input", "r", stdin);
+  Board board;
+  Solver::Algorithm algorithm;
+  string algorithmName;
+  std::vector<Direction> order;
+  bool isRandom = false;
+  Heuristic::Type heuristic;
+};
 
-//  try {
-    Board b2 = Board(4, 4);
-    b2.setValueAt(0, 0, 5);
-    b2.setValueAt(0, 1, 1);
-    b2.setValueAt(0, 2, 2);
-    b2.setValueAt(0, 3, 3);
+string msg = ""
+             "Possible algorithms:\n"
+             "-b/--bfs order   Breadth-first search\n"
+             "-d/--dfs order   Depth-first search\n"
+             "-i/--idfs order   Iterative deepenening DFS\n"
+             "-h/--bf id_of_heurisic   Best-first strategy\n"
+             "-a/--astar id_of_heurisic   A* strategy\n"
+             "-s/--sma id_of_heurisic   SMA* strategy\n"
+             "\n"
+             "Order can be composed of four letter 'L', 'R', 'D', 'U' or a string 'RAND'.\n"
+             "\n"
+             "Heuristics:\n"
+             "0   AllTaxicab - taxicab distance to correct position of all cells except 0\n"
+             "1   ZeroTaxicab - taxicab distance of 0 cell to correct position\n"
+             "2   WrongCount - number of wrong places cells\n"
+    ;
 
-    b2.setValueAt(1, 0, 9);
-    b2.setValueAt(1, 1, 10);
-    b2.setValueAt(1, 2, 6);
-    b2.setValueAt(1, 3, 4);
+Config readArgs(int argc, char *argv[])
+{
+  if (argc == 1 || strncmp(argv[1], "--help", 6) == 0) {
+    cout << msg;
+    exit(0);
+  }
 
-    b2.setValueAt(2, 0, 13);
-    b2.setValueAt(2, 1, 0);
-    b2.setValueAt(2, 2, 7);
-    b2.setValueAt(2, 3, 8);
+  if (argc != 3)
+    throw CoreException("Wrong number of arguments.");
 
-    b2.setValueAt(3, 0, 14);
-    b2.setValueAt(3, 1, 15);
-    b2.setValueAt(3, 2, 11);
-    b2.setValueAt(3, 3, 12);
+  Config config;
+  string str = argv[1];
+  string order;
+  string heuristic;
 
-    Board b4 = Board(4, 4);
-    b4.setValueAt(0, 0, 1);
-    b4.setValueAt(0, 1, 2);
-    b4.setValueAt(0, 2, 3);
-    b4.setValueAt(0, 3, 4);
+  if (str == "-b" || str == "--bfs") {
+    order = argv[2];
+    config.algorithm = Solver::Bfs;
+    config.algorithmName = "Bfs";
+  } else if (str == "-d" || str == "--dfs") {
+    order = argv[2];
+    config.algorithm = Solver::Dfs;
+    config.algorithmName = "Dfs";
+  } else if (str == "-i" || str == "--idfs") {
+    order = argv[2];
+    config.algorithm = Solver::Idfs;
+    config.algorithmName = "Idfs";
+  } else if (str == "-h" || str == "--bf") {
+    heuristic = argv[2];
+    config.algorithm = Solver::BestFirst;
+    config.algorithmName = "BestFirst";
+  } else if (str == "-a" || str == "--astar") {
+    heuristic = argv[2];
+    config.algorithm = Solver::AStar;
+    config.algorithmName = "AStar";
+  } else if (str == "-s" || str == "--sma") {
+    heuristic = argv[2];
+    config.algorithm = Solver::SmaStar;
+    config.algorithmName = "SmaStart";
+  } else {
+    throw CoreException("Wrong argument: " + str + ".");
+  }
 
-    b4.setValueAt(1, 0, 5);
-    b4.setValueAt(1, 1, 6);
-    b4.setValueAt(1, 2, 7);
-    b4.setValueAt(1, 3, 8);
+  if (order.size() > 0) {
+    if (order.size() != 4)
+      throw CoreException("Wrong order size.");
 
-    b4.setValueAt(2, 0, 9);
-    b4.setValueAt(2, 1, 10);
-    b4.setValueAt(2, 2, 11);
-    b4.setValueAt(2, 3, 12);
-
-    b4.setValueAt(3, 0, 13);
-    b4.setValueAt(3, 1, 0);
-    b4.setValueAt(3, 2, 14);
-    b4.setValueAt(3, 3, 15);
-
-    Solver *solver = new SmaStarSolver();
-    cout << "Is solvable: " << solver->solve(b2) << endl; //"\nResult:\n";
-    for (auto &a : solver->result()) {
-      std::string s = a;
-      cout << s << " ";
+    if (order == "RAND") {
+      config.isRandom = true;
     }
-    cout << '\n';
-    cout << "Result: " << solver->result().size() << '\n';
-    cout << "Checked: " << solver->checkedStates() << '\n';
-//  }
-//  catch(const CoreException &exception) {
-//      std::cerr << exception.what() << std::endl;
-//  }
+    else {
+      for (auto &x : order) {
+        switch (x) {
+        case 'L': config.order.push_back(Direction::Left); break;
+        case 'R': config.order.push_back(Direction::Right); break;
+        case 'U': config.order.push_back(Direction::Up); break;
+        case 'D': config.order.push_back(Direction::Down); break;
+        default: throw CoreException("Wrong order: " + order + ".");
+        }
+      }
+
+      int count[4] = { 0, 0, 0, 0 };
+      for (auto &x : config.order)
+        count[x]++;
+      for (int i = 0; i < 4; i++)
+        if (count[i] != 1)
+          throw CoreException("Wrong order: " + order + ".");
+    }
+  }
+
+  if (heuristic.size() > 0) {
+    int id;
+    try {
+      id = std::stoi(heuristic);
+    } catch (std::exception &e) {
+      throw CoreException("Wrong heuristic id.");
+    }
+    switch (id) {
+    case 0: config.heuristic = Heuristic::AllTaxicab; break;
+    case 1: config.heuristic = Heuristic::ZeroTaxicab; break;
+    case 2: config.heuristic = Heuristic::WrongCount; break;
+    default: throw CoreException("Wrong heurisitc id.");
+    }
+  }
+
+  try {
+    unsigned rows, columns;
+    cin >> rows >> columns;
+    config.board = Board(rows, columns);
+    for (unsigned iRow = 0; iRow < rows; iRow++) {
+      for (unsigned iColumn = 0; iColumn < columns; iColumn++) {
+        unsigned value;
+        cin >> value;
+        config.board.setValueAt(iRow, iColumn, value);
+      }
+    }
+  } catch (CoreException &e) {
+    throw CoreException("Fail to create board from input.");
+  }
+
+  return config;
+}
+
+void run(Config config) {
+  Solver *solver;
+  switch (config.algorithm) {
+  case Solver::Bfs: solver = new BfsSolver(); break;
+  case Solver::Dfs: solver = new DfsSolver(); break;
+  case Solver::Idfs: solver = new IdfsSolver(); break;
+  case Solver::BestFirst: solver = new BestFirstSolver(); break;
+  case Solver::AStar: solver = new AStarSolver(); break;
+  case Solver::SmaStar: solver = new SmaStarSolver(); break;
+  default: assert(false);
+  }
+
+  if (config.order.size() > 0)
+    solver->setOrder(config.order);
+  if (config.isRandom == true)
+    solver->randomOrder(true);
+
+  if (!Utils::isSolvable(config.board)) {
+    cout << "Board is not solvable." << endl;
+    return;
+  }
+
+  auto startTime = chrono::system_clock::now();
+  bool isSolved = solver->solve(config.board, config.heuristic);
+  auto finishTime = chrono::system_clock::now();
+
+  if (isSolved) {
+    Board board = config.board;
+    for (auto &x : solver->result())
+      Utils::makeMovement(board, x);
+    isSolved = (board == Utils::constructFinalBoard(board.rows(), board.columns()));
+  }
+
+  if (!isSolved) {
+    cout << "Failed to solve board." << endl;
+    return;
+  }
+
+  cout << "Algorithm: " << config.algorithmName << "\n";
+  cout << "Checked nodes: " << solver->checkedStates() << "\n";
+  chrono::duration<double> time = finishTime - startTime;
+  cout << "Time: " << time.count() << "s\n";
+  cout << "Result lenght: " << solver->result().size() << "\n";
+  cout << "Result:\n";
+  for (auto &x : solver->result())
+    cout << x << " ";
+  cout << endl;
+}
+
+int main(int argc, char* argv[])
+{
+  ios_base::sync_with_stdio(false);
+//  freopen("input", "r", stdin);
+
+  try {
+    run(readArgs(argc, argv));
+
+  } catch (CoreException &e) {
+    cerr << "ERROR: " << e.what() << endl;
+    return 1;
+  }
+
   return 0;
 }
+

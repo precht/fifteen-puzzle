@@ -1,6 +1,6 @@
 #include "board.h"
 #include "coreexception.h"
-
+#include <iostream>
 #include <vector>
 
 Board::Board()
