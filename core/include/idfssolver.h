@@ -17,10 +17,21 @@ public:
 
     IdfsState(const Board &cBoard);
     operator State() const;
+
+    struct Hash
+    {
+      std::size_t operator()(const State &cState) const;
+    };
+
+    struct Equal
+    {
+      bool operator()(const State &cLhs, const State &cRhs) const;
+    };
   };
 
 private:
   std::stack<IdfsState> mStack;
+  std::unordered_set<IdfsState, IdfsState::Hash, IdfsState::Equal> mIdfsVisited;
   uint32_t cDepthLimit = 2e8;
 
   bool solve() override;
