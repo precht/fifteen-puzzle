@@ -9,6 +9,7 @@ class BfsSolver : public Solver
   std::queue<State> mQueue;
 
   bool solve() override;
+  Solver* clone() const override;
 };
 
 #endif // BFSSOLVER_H

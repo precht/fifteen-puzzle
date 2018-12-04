@@ -50,6 +50,11 @@ bool IdfsSolver::solve()
   return false;
 }
 
+Solver* IdfsSolver::clone() const
+{
+  return new IdfsSolver(dynamic_cast<const IdfsSolver&>(*this));
+}
+
 IdfsSolver::IdfsState::IdfsState(const Board &cBoard)
   : memory(cBoard.memory())
 { }

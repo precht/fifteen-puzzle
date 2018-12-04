@@ -52,6 +52,11 @@ bool AStarSolver::solve()
   return false;
 }
 
+Solver* AStarSolver::clone() const
+{
+  return new AStarSolver(dynamic_cast<const AStarSolver&>(*this));
+}
+
 AStarSolver::AState::AState(const Board &cBoard, const uint32_t cEstimatedCost)
   : memory(cBoard.memory()), estimatedCost(cEstimatedCost)
 { }

@@ -42,3 +42,8 @@ bool DfsSolver::solve()
 
   return false;
 }
+
+Solver* DfsSolver::clone() const
+{
+  return new DfsSolver(dynamic_cast<const DfsSolver&>(*this));
+}

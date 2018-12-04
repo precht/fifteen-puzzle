@@ -24,6 +24,7 @@ private:
   uint32_t cDepthLimit = 2e8;
 
   bool solve() override;
+  Solver* clone() const override;
 };
 
 #endif // IDFSSOLVER_H

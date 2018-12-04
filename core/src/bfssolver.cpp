@@ -42,3 +42,8 @@ bool BfsSolver::solve()
 
   return false;
 }
+
+Solver* BfsSolver::clone() const
+{
+  return new BfsSolver(dynamic_cast<const BfsSolver&>(*this));
+}

@@ -92,10 +92,10 @@ std::vector<Direction> Solver::generatePossibleDirections(const Board &cBoard)
   return possibleDirections;
 }
 
-bool Solver::solve()
-{
-  return false;
-}
+//bool Solver::solve()
+//{
+//  return false;
+//}
 
 void Solver::setOrder(const std::vector<Direction> &order)
 {
@@ -107,4 +107,3 @@ void Solver::randomOrder(bool isRandomOrder)
   mOrder = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
   mIsRandomOrder = isRandomOrder;
 }
-

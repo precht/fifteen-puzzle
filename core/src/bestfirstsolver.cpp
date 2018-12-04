@@ -58,3 +58,8 @@ bool BestFirstSolver::Greater::operator()(const BFState &cLhs, const BFState &cR
 {
   return (cLhs.estimatedCost > cRhs.estimatedCost);
 }
+
+Solver* BestFirstSolver::clone() const
+{
+  return new BestFirstSolver(dynamic_cast<const BestFirstSolver&>(*this));
+}
