@@ -9,6 +9,7 @@ class DfsSolver : public Solver
   std::stack<State> mStack;
 
   bool solve() override;
+  Solver* clone() const override;
 };
 
 #endif // DFSSOLVER_H

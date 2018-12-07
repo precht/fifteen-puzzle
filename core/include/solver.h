@@ -36,9 +36,10 @@ public:
 
   void setOrder(const std::vector<Direction> &order);
   void randomOrder(bool isRandomOrder);
+  virtual Solver* clone() const = 0;
 
 private:
-  virtual bool solve();
+  virtual bool solve() = 0;
   virtual void storeResult();
 };
 

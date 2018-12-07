@@ -220,6 +220,11 @@ void SmaStarSolver::storeResult()
   std::reverse(mResult.begin(), mResult.end());
 }
 
+Solver* SmaStarSolver::clone() const
+{
+  return new SmaStarSolver(dynamic_cast<const SmaStarSolver&>(*this));
+}
+
 void SmaStarSolver::print()
 {
 //  for (auto &xs : mSet)

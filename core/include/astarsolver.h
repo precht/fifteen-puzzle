@@ -29,6 +29,7 @@ private:
   Heuristic mHeuristic;
 
   bool solve() override;
+  Solver* clone() const override;
 };
 
 #endif // ASTARSOLVER_H

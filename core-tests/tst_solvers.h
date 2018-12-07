@@ -50,47 +50,47 @@ protected:
     b2.setValueAt(3, 2, 11);
     b2.setValueAt(3, 3, 12);
 
-    b3 = Board(4, 4);
-    b3.setValueAt(0, 0, 0);
-    b3.setValueAt(0, 1, 1);
-    b3.setValueAt(0, 2, 3);
-    b3.setValueAt(0, 3, 4);
+//    b3 = Board(4, 4);
+//    b3.setValueAt(0, 0, 0);
+//    b3.setValueAt(0, 1, 1);
+//    b3.setValueAt(0, 2, 3);
+//    b3.setValueAt(0, 3, 4);
 
-    b3.setValueAt(1, 0, 5);
-    b3.setValueAt(1, 1, 2);
-    b3.setValueAt(1, 2, 6);
-    b3.setValueAt(1, 3, 8);
+//    b3.setValueAt(1, 0, 5);
+//    b3.setValueAt(1, 1, 2);
+//    b3.setValueAt(1, 2, 6);
+//    b3.setValueAt(1, 3, 8);
 
-    b3.setValueAt(2, 0, 9);
-    b3.setValueAt(2, 1, 10);
-    b3.setValueAt(2, 2, 7);
-    b3.setValueAt(2, 3, 11);
+//    b3.setValueAt(2, 0, 9);
+//    b3.setValueAt(2, 1, 10);
+//    b3.setValueAt(2, 2, 7);
+//    b3.setValueAt(2, 3, 11);
 
-    b3.setValueAt(3, 0, 13);
-    b3.setValueAt(3, 1, 14);
-    b3.setValueAt(3, 2, 15);
-    b3.setValueAt(3, 3, 12);
+//    b3.setValueAt(3, 0, 13);
+//    b3.setValueAt(3, 1, 14);
+//    b3.setValueAt(3, 2, 15);
+//    b3.setValueAt(3, 3, 12);
 
-    b4 = Board(4, 4);
-    b4.setValueAt(0, 0, 1);
-    b4.setValueAt(0, 1, 2);
-    b4.setValueAt(0, 2, 3);
-    b4.setValueAt(0, 3, 4);
+//    b4 = Board(4, 4);
+//    b4.setValueAt(0, 0, 1);
+//    b4.setValueAt(0, 1, 2);
+//    b4.setValueAt(0, 2, 3);
+//    b4.setValueAt(0, 3, 4);
 
-    b4.setValueAt(1, 0, 5);
-    b4.setValueAt(1, 1, 6);
-    b4.setValueAt(1, 2, 7);
-    b4.setValueAt(1, 3, 8);
+//    b4.setValueAt(1, 0, 5);
+//    b4.setValueAt(1, 1, 6);
+//    b4.setValueAt(1, 2, 7);
+//    b4.setValueAt(1, 3, 8);
 
-    b4.setValueAt(2, 0, 9);
-    b4.setValueAt(2, 1, 0);
-    b4.setValueAt(2, 2, 11);
-    b4.setValueAt(2, 3, 12);
+//    b4.setValueAt(2, 0, 9);
+//    b4.setValueAt(2, 1, 0);
+//    b4.setValueAt(2, 2, 11);
+//    b4.setValueAt(2, 3, 12);
 
-    b4.setValueAt(3, 0, 13);
-    b4.setValueAt(3, 1, 10);
-    b4.setValueAt(3, 2, 14);
-    b4.setValueAt(3, 3, 15);
+//    b4.setValueAt(3, 0, 13);
+//    b4.setValueAt(3, 1, 10);
+//    b4.setValueAt(3, 2, 14);
+//    b4.setValueAt(3, 3, 15);
 
 //    b4 = Board(4, 4);
 //    b4.setValueAt(0, 0, );

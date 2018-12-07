@@ -4,11 +4,11 @@ SUBDIRS += \
     core \
     core-tests \
     cli \
+    gui
 
-cli.depends = core
 core-tests.depends = core
-
-OTHER_FILES +=
+cli.depends = core
+gui.depends = core
 
 OTHER_FILES += \
     common.pri

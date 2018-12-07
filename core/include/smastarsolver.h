@@ -46,6 +46,7 @@ private:
   void insert(const uint64_t cMemory, const GraphState cGraphState);
   void update(const SetState &setState);
   void storeResult() override;
+  Solver* clone() const override;
   void print();
 
 //  uint64_t mCounter = 0;

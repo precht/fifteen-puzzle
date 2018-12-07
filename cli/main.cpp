@@ -1,9 +1,9 @@
+#include "core.h"
 #include <iostream>
 #include <cstring>
 #include <cassert>
 #include <chrono>
-
-#include "core.h"
+#include <memory>
 
 using namespace std;
 
@@ -138,21 +138,21 @@ Config readArgs(int argc, char *argv[])
 }
 
 void run(Config config) {
-  Solver *solver;
+  std::unique_ptr<Solver> pSolver;
   switch (config.algorithm) {
-  case Solver::Bfs: solver = new BfsSolver(); break;
-  case Solver::Dfs: solver = new DfsSolver(); break;
-  case Solver::Idfs: solver = new IdfsSolver(); break;
-  case Solver::BestFirst: solver = new BestFirstSolver(); break;
-  case Solver::AStar: solver = new AStarSolver(); break;
-  case Solver::SmaStar: solver = new SmaStarSolver(); break;
+  case Solver::Bfs: pSolver = std::make_unique<BfsSolver>(); break;
+  case Solver::Dfs: pSolver = std::make_unique<DfsSolver>(); break;
+  case Solver::Idfs: pSolver = std::make_unique<IdfsSolver>(); break;
+  case Solver::BestFirst: pSolver = std::make_unique<BestFirstSolver>(); break;
+  case Solver::AStar: pSolver = std::make_unique<AStarSolver>(); break;
+  case Solver::SmaStar: pSolver = std::make_unique<SmaStarSolver>(); break;
   default: assert(false);
   }
 
   if (config.order.size() > 0)
-    solver->setOrder(config.order);
+    pSolver->setOrder(config.order);
   if (config.isRandom == true)
-    solver->randomOrder(true);
+    pSolver->randomOrder(true);
 
   if (!Utils::isSolvable(config.board)) {
     cout << "Board is not solvable." << endl;
@@ -160,12 +160,12 @@ void run(Config config) {
   }
 
   auto startTime = chrono::system_clock::now();
-  bool isSolved = solver->solve(config.board, config.heuristic);
+  bool isSolved = pSolver->solve(config.board, config.heuristic);
   auto finishTime = chrono::system_clock::now();
 
   if (isSolved) {
     Board board = config.board;
-    for (auto &x : solver->result())
+    for (auto &x : pSolver->result())
       Utils::makeMovement(board, x);
     isSolved = (board == Utils::constructFinalBoard(board.rows(), board.columns()));
   }
@@ -176,12 +176,12 @@ void run(Config config) {
   }
 
   cout << "Algorithm: " << config.algorithmName << "\n";
-  cout << "Checked nodes: " << solver->checkedStates() << "\n";
+  cout << "Checked nodes: " << pSolver->checkedStates() << "\n";
   chrono::duration<double> time = finishTime - startTime;
   cout << "Time: " << time.count() << "s\n";
-  cout << "Result lenght: " << solver->result().size() << "\n";
+  cout << "Result lenght: " << pSolver->result().size() << "\n";
   cout << "Result:\n";
-  for (auto &x : solver->result())
+  for (auto &x : pSolver->result())
     cout << x << " ";
   cout << endl;
 }

@@ -30,6 +30,7 @@ private:
   Heuristic mHeuristic;
 
   bool solve() override;
+  Solver* clone() const override;
 };
 
 #endif // BESTFIRSTSOLVER_H
