@@ -12,7 +12,7 @@ public:
   struct BFState
   {
     uint64_t memory = 0;
-    Direction direction;
+    Direction direction = Direction::None;
     uint8_t estimatedCost = 0;
 
     BFState() = default;
@@ -29,8 +29,10 @@ private:
   std::priority_queue<BFState, std::vector<BFState>, Greater> mPriorityQueue;
   Heuristic mHeuristic;
 
-  bool solve() override;
-  Solver* clone() const override;
+public:
+  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool isLoopEmpty() const override;
+  bool processNextState() override;
 };
 
 #endif // BESTFIRSTSOLVER_H

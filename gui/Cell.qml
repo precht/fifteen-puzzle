@@ -8,6 +8,13 @@ Item {
   width: Props.cellSize;
   height: Props.cellSize;
 
+  function setValue(newValue) {
+    if (newValue === 0)
+      textId.text = "";
+    else
+      textId.text = newValue;
+  }
+
   function resetColor() {
     rect.color = "transparent";
   }
@@ -38,7 +45,8 @@ Item {
   }
 
   Text {
-    text: value;
+    id: textId;
+    text: "";
     font.pixelSize: 20;
     anchors.centerIn: parent;
   }

@@ -1,68 +1,68 @@
 #include "idfssolver.h"
 #include "utils.h"
+#include <cassert>
 
-bool IdfsSolver::solve()
+bool IdfsSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
 {
-  for (uint32_t iDepth = 1; iDepth < cDepthLimit; iDepth++) {
-    mStack = {};
+  return Solver::initializeSearchLoop(cInitialBoard, cType);
+}
+
+bool IdfsSolver::isLoopEmpty() const
+{
+  return ((mStack.empty() && mDepth >= mcDepthLimit) || mIsSolved);
+}
+
+bool IdfsSolver::processNextState()
+{
+  assert(!isLoopEmpty());
+  if (mStack.empty()) {
+    mDepth++;
+    mStack.push({ mInitialBoard });
     mIdfsVisited.clear();
-    Board board = mInitialBoard;
-    IdfsState state = { mInitialBoard };
-    mIdfsVisited.insert(mInitialBoard);
+  }
 
-    auto possibleDirections = generatePossibleDirections(mInitialBoard);
-    for (auto &direction : possibleDirections) {
-      state.direction = direction;
-      mStack.push(state);
+  Board board = mInitialBoard;
+  IdfsState state = mStack.top();
+  mStack.pop();
+  mCheckedStates++;
+
+  board.setMemory(state.memory);
+  Utils::makeMovement(board, state.direction);
+  state.memory = board.memory();
+
+  auto it = mIdfsVisited.find(board);
+  if (it != mIdfsVisited.end()) {
+    if (it->depth <= state.depth)
+      return false;
+    mIdfsVisited.erase(it);
+  }
+  mIdfsVisited.insert(state);
+
+  if (board == mFinalBoard) {
+    mVisited.clear();
+    mIsSolved = true;
+    while (!mIdfsVisited.empty()) {
+      mVisited.insert(*mIdfsVisited.begin());
+      mIdfsVisited.erase(mIdfsVisited.begin());
     }
+    storeResult();
+    return true;
+  }
 
-    while (!mStack.empty()) {
-      state = mStack.top();
-      mStack.pop();
-      mCheckedStates++;
+  state.depth++;
+  if (state.depth >= mDepth)
+    return false;
 
-      board.setMemory(state.memory);
-      Utils::makeMovement(board, state.direction);
-      state.memory = board.memory();
-
-      auto it = mIdfsVisited.find(board);
-      if (it != mIdfsVisited.end()) {
-        if (it->depth <= state.depth)
-          continue;
-        mIdfsVisited.erase(it);
-      }
-      mIdfsVisited.insert(state);
-
-      if (board == mFinalBoard) {
-        mVisited.clear();
-        while (!mIdfsVisited.empty()) {
-          mVisited.insert(*mIdfsVisited.begin());
-          mIdfsVisited.erase(mIdfsVisited.begin());
-        }
-        return true;
-      }
-
-      state.depth++;
-      if (state.depth >= iDepth)
-        continue;
-
-      const Direction currentDirection = state.direction;
-      possibleDirections = generatePossibleDirections(board);
-      for (auto &direction : possibleDirections) {
-        if (Direction::isReverseDirection(direction, currentDirection))
-          continue;
-        state.direction = direction;
-        mStack.push(state);
-      }
-    }
+  const Direction currentDirection = state.direction;
+  auto possibleDirections = generatePossibleDirections(board);
+  for (auto &direction : possibleDirections) {
+    if (Direction::isReverseDirection(direction, currentDirection))
+      continue;
+    state.direction = direction;
+    mStack.push(state);
   }
 
   return false;
-}
-
-Solver* IdfsSolver::clone() const
-{
-  return new IdfsSolver(dynamic_cast<const IdfsSolver&>(*this));
 }
 
 IdfsSolver::IdfsState::IdfsState(const Board &cBoard)

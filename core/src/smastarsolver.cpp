@@ -2,149 +2,150 @@
 #include "utils.h"
 #include "coreexception.h"
 #include <algorithm>
-#include <iostream>
 #include <cassert>
 #include <queue>
 
-bool SmaStarSolver::solve()
+bool SmaStarSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
 {
+  if (Solver::initializeSearchLoop(cInitialBoard, cType) == false)
+    return false;
+
   mSet = {};
   mGraph = {};
   mCheckedStates = 0;
 
   Board board = mInitialBoard;
-  {
-    SetState setState;
-    GraphState graphState;
+  SetState setState;
+  GraphState graphState;
 
-    graphState.estimatedCost = 1;
-    setState.estimatedCost = 1;
-    setState.memory = board.memory();
+  graphState.estimatedCost = 1;
+  setState.estimatedCost = 1;
+  setState.memory = board.memory();
 
-    mGraph[board.memory()] = graphState;
-    mSet.insert(setState);
-//    mIds[board.memory()] = ++mCounter;
+  mGraph[board.memory()] = graphState;
+  mSet.insert(setState);
+  return true;
+}
+
+bool SmaStarSolver::isLoopEmpty() const
+{
+  return (mSet.empty() || mIsSolved);
+}
+
+bool SmaStarSolver::processNextState()
+{
+  assert(!isLoopEmpty());
+  mCheckedStates++;
+  Board board = mInitialBoard;
+
+  assert(mSet.begin() != mSet.end());
+  SetState setState = *(mSet.begin());
+  board.setMemory(setState.memory);
+
+  assert((mGraph.find(setState.memory) != mGraph.end()));
+  GraphState &graphState = mGraph[setState.memory];
+
+  if (board == mFinalBoard) {
+    mFinalSetState = setState;
+    mIsSolved = true;
+    storeResult();
+    return true;
   }
 
-  while (!mSet.empty()) {
-    mCheckedStates++;
-    assert(mSet.begin() != mSet.end());
-    SetState setState = *(mSet.begin());
-    assert((mGraph.find(setState.memory) != mGraph.end()));
-    GraphState &graphState = mGraph[setState.memory];
-//    std::cout<< ">>> Node: " << mIds[setState.memory] << " "
-//             << graphState.direction << std::endl;
-//    print();
+  // set estimated cost of current node to depth and backtrack update
+  // do this to prevent deletion of nodes that are on current path
+  assert(mSet.find(setState) != mSet.end());
+  mSet.erase(setState);
+  setState.estimatedCost = setState.depth;
+  mSet.insert(setState);
+  graphState.estimatedCost = setState.depth;
+  if (setState.depth > 1) {
+    Utils::reverseMovement(board, graphState.direction);
+    SetState tmpSetState;
+    tmpSetState.memory = board.memory();
+    tmpSetState.depth = setState.depth - 1;
+    assert((mGraph.find(board.memory()) != mGraph.end()));
+    tmpSetState.estimatedCost = mGraph[board.memory()].estimatedCost;
+    update(tmpSetState);
+  }
+
+  // insert new nodes
+  board.setMemory(setState.memory);
+  auto possibleDirections = generatePossibleDirections(board);
+  for (auto &direction : possibleDirections) {
     board.setMemory(setState.memory);
+    Utils::makeMovement(board, direction);
 
-    if (board == mFinalBoard) {
-      mFinalSetState = setState;
-      return true;
-    }
+    // if node is in stored or its depth exceeds cSizeLimit then omit it
+    if ((mGraph.find(board.memory()) != mGraph.end()) || (setState.depth + 1 > cSizeLimit))
+      continue;
 
-    // set estimated cost of current node to depth and backtrack update
-    // do this to prevent deletion of nodes that are on current path
-    assert(mSet.find(setState) != mSet.end());
-    mSet.erase(setState);
-    setState.estimatedCost = setState.depth;
-    mSet.insert(setState);
-    graphState.estimatedCost = setState.depth;
-    if (setState.depth > 1) {
-      Utils::reverseMovement(board, graphState.direction);
-      SetState tmpSetState;
-      tmpSetState.memory = board.memory();
-      tmpSetState.depth = setState.depth - 1;
-      assert((mGraph.find(board.memory()) != mGraph.end()));
-      tmpSetState.estimatedCost = mGraph[board.memory()].estimatedCost;
-      update(tmpSetState);
-    }
-//    print();
+    bool isChildProccessed = false;
+    for (auto &x : graphState.children)
+      if (x.first == board.memory() && x.second == false)
+        isChildProccessed = true;
+    if (isChildProccessed)
+      continue;
 
-    // insert new nodes
-    board.setMemory(setState.memory);
-    auto possibleDirections = generatePossibleDirections(board);
-    for (auto &direction : possibleDirections) {
-      board.setMemory(setState.memory);
-      Utils::makeMovement(board, direction);
+    SetState childSetState;
+    childSetState.depth = setState.depth + 1;
+    childSetState.memory = board.memory();
+    childSetState.estimatedCost = setState.depth + mHeuristic(board, mFinalBoard, mDistance);
 
-      // if node is in stored or its depth exceeds cSizeLimit then omit it
-      if ((mGraph.find(board.memory()) != mGraph.end()) || (setState.depth + 1 > cSizeLimit))
+    GraphState childGraphState;
+    childGraphState.depth = childSetState.depth;
+    childGraphState.estimatedCost = childSetState.estimatedCost;
+    childGraphState.direction = direction;
+
+    graphState.children.push_back({ board.memory(), true });
+
+    // remove if no more space
+    if (mSet.size() == cSizeLimit) {
+      SetState lastSetstate = *(mSet.rbegin());
+      if (mLess(lastSetstate, childSetState)) {
         continue;
-
-      bool isChildProccessed = false;
-      for (auto &x : graphState.children)
-        if (x.first == board.memory() && x.second == false)
-          isChildProccessed = true;
-      if (isChildProccessed)
-        continue;
-
-      SetState childSetState;
-      childSetState.depth = setState.depth + 1;
-      childSetState.memory = board.memory();
-      childSetState.estimatedCost = setState.depth + mHeuristic(board, mFinalBoard, mDistance);
-
-      GraphState childGraphState;
-      childGraphState.depth = childSetState.depth;
-      childGraphState.estimatedCost = childSetState.estimatedCost;
-      childGraphState.direction = direction;
-
-      graphState.children.push_back({ board.memory(), true });
-//      if (mIds.find(board.memory()) == mIds.end())
-//        mIds[board.memory()] = ++mCounter;
-
-      // remove if no more space
-      if (mSet.size() == cSizeLimit) {
-        SetState lastSetstate = *(mSet.rbegin());
-        if (mLess(lastSetstate, childSetState)) {
-//          std::cout<< "InsertOmmit: " << mIds[childSetState.memory] << std::endl;
-          continue;
-        }
-        // delete of children of the state we need to drop from set
-//        std::cout<< "InsertDelete: " << mIds[lastSetstate.memory] << std::endl;
-        std::queue<SetState> toDelete;
-        toDelete.push(lastSetstate);
-
-        while (!toDelete.empty()) {
-          SetState deleteState = toDelete.front();
-          toDelete.pop();
-          assert(mGraph.find(deleteState.memory) != mGraph.end());
-          for (auto &child : mGraph[deleteState.memory].children) {
-            if ((child.second == true)
-                && (mGraph.find(child.first) != mGraph.end())
-                && (mGraph[child.first].depth == deleteState.depth + 1)) {
-              SetState tmpState;
-              tmpState.memory = child.first;
-              tmpState.estimatedCost = mGraph[child.first].estimatedCost;
-              tmpState.depth = deleteState.depth + 1;
-              toDelete.push(tmpState);
-            }
-          }
-          mGraph.erase(deleteState.memory);
-          mSet.erase(deleteState);
-        }
       }
+      // delete of children of the state we need to drop from set
+      std::queue<SetState> toDelete;
+      toDelete.push(lastSetstate);
 
-      mSet.insert(childSetState);
-      mGraph[board.memory()] = childGraphState;
+      while (!toDelete.empty()) {
+        SetState deleteState = toDelete.front();
+        toDelete.pop();
+        assert(mGraph.find(deleteState.memory) != mGraph.end());
+        for (auto &child : mGraph[deleteState.memory].children) {
+          if ((child.second == true)
+              && (mGraph.find(child.first) != mGraph.end())
+              && (mGraph[child.first].depth == deleteState.depth + 1)) {
+            SetState tmpState;
+            tmpState.memory = child.first;
+            tmpState.estimatedCost = mGraph[child.first].estimatedCost;
+            tmpState.depth = deleteState.depth + 1;
+            toDelete.push(tmpState);
+          }
+        }
+        mGraph.erase(deleteState.memory);
+        mSet.erase(deleteState);
+      }
     }
 
-    // set estimated cost of current node to minimum estimated cost of children
-    // if no child exists or all children have estimated cost cInfinity then remove current node
-    update(setState);
+    mSet.insert(childSetState);
+    mGraph[board.memory()] = childGraphState;
   }
+
+  // set estimated cost of current node to minimum estimated cost of children
+  // if no child exists or all children have estimated cost cInfinity then remove current node
+  update(setState);
 
   return false;
 }
 
 void SmaStarSolver::update(const SetState &setState)
 {
-//  std::cout<< "Update: " << mIds[setState.memory] << std::endl;
-
   Board board = mInitialBoard;
   SetState iSetState = setState;
 
   while (true) {
-//    std::cout<< "_" << mIds[iSetState.memory] << std::endl;
     uint64_t memory = iSetState.memory;
     assert(mGraph.find(memory) != mGraph.end());
     GraphState &iGraphState = mGraph[memory];
@@ -163,7 +164,7 @@ void SmaStarSolver::update(const SetState &setState)
     }
 
     if (previousCost == iGraphState.estimatedCost)
-        break;
+      break;
 
     assert(mSet.find(iSetState) != mSet.end());
     mSet.erase(iSetState);
@@ -178,16 +179,11 @@ void SmaStarSolver::update(const SetState &setState)
       Utils::reverseMovement(board, iDirection);
       tmpState.depth--;
       tmpState.memory = board.memory();
-      if (mGraph.find(board.memory()) == mGraph.end()) {
-        print();
-//        std::cout << "Failed on " << mIds[board.memory()] << std::endl;
-      }
       assert(mGraph.find(board.memory()) != mGraph.end());
       tmpState.estimatedCost = mGraph[board.memory()].estimatedCost;
     }
 
     if (iGraphState.estimatedCost == cInfinity) {
-//      std::cout<< "UpdateDelete: " << mIds[iSetState.memory] << std::endl;
       mSet.erase(iSetState);
       mGraph.erase(memory);
 
@@ -218,18 +214,6 @@ void SmaStarSolver::storeResult()
     iSetState.memory = board.memory();
   }
   std::reverse(mResult.begin(), mResult.end());
-}
-
-Solver* SmaStarSolver::clone() const
-{
-  return new SmaStarSolver(dynamic_cast<const SmaStarSolver&>(*this));
-}
-
-void SmaStarSolver::print()
-{
-//  for (auto &xs : mSet)
-//    std::cout << "(" << mIds[xs.memory] << "," << xs.estimatedCost << "," << xs.depth << ") ";
-//  std::cout << std::endl;
 }
 
 bool SmaStarSolver::Less::operator()(const SetState &cLhs, const SetState &cRhs) const

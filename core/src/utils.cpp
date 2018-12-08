@@ -1,5 +1,5 @@
 #include "utils.h"
-#include "coreexception.h"
+#include "core.h"
 #include <vector>
 #include <ostream>
 
@@ -54,7 +54,7 @@ void Utils::makeMovement(Board &board, Direction direction)
   case Direction::Right: isCorrectDirection = (zeroPosition.column != 0); break;
   case Direction::Up: isCorrectDirection = (zeroPosition.row + 1 != board.rows()); break;
   case Direction::Down: isCorrectDirection = (zeroPosition.row != 0); break;
-  default: isCorrectDirection = false;
+  default:; // do nothing
   }
   if (!isCorrectDirection)
     throw CoreException(__FILE__, __LINE__, direction);
@@ -81,8 +81,7 @@ void Utils::makeMovement(Board &board, Direction direction)
     board.setValueAt(zeroPosition.row, zeroPosition.column, value);
     board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
     break;
-  default:
-    throw CoreException(__FILE__, __LINE__);
+  default:; // do nothing
   }
 }
 
@@ -93,7 +92,7 @@ void Utils::reverseMovement(Board &board, Direction direction)
   case Direction::Right: direction = Direction::Left; break;
   case Direction::Up: direction = Direction::Down; break;
   case Direction::Down: direction = Direction::Up; break;
-  default: throw CoreException(__FILE__, __LINE__);
+  default:; // do nothing
   }
   Utils::makeMovement(board, direction);
 }
@@ -116,4 +115,17 @@ void Utils::printBoard(const Board &cBoard, std::ostream &output)
     output << "*\n";
   }
   output << std::string(cColumns * (cMaxDigitCount + 1) + 3, '*') << '\n';
+}
+
+Solver *Utils::constructSolver(Solver::Algorithm algorithm)
+{
+  switch (algorithm) {
+  case Solver::Bfs: return new BfsSolver();
+  case Solver::Dfs: return new DfsSolver();
+  case Solver::Idfs: return new IdfsSolver();
+  case Solver::BestFirst: return new BestFirstSolver();
+  case Solver::AStar: return new AStarSolver();
+  case Solver::SmaStar: return new SmaStarSolver();
+  }
+  return nullptr;
 }

@@ -8,8 +8,10 @@ class DfsSolver : public Solver
 {
   std::stack<State> mStack;
 
-  bool solve() override;
-  Solver* clone() const override;
+public:
+  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool isLoopEmpty() const override;
+  bool processNextState() override;
 };
 
 #endif // DFSSOLVER_H

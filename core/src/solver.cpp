@@ -4,14 +4,46 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+//#include <iostream>
 
 Solver::Solver()
 {
   std::random_device rd;
   mRandomGenerator = std::mt19937(rd());
+//  std::cout << "solver created" << std::endl;
+}
+
+Solver::~Solver()
+{
+//  std::cout << "solver deleted" << std::endl;
 }
 
 bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
+{
+//  mInitialBoard = cInitialBoard;
+//  mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
+//  mDistance = cType;
+
+//  mResult.clear();
+//  mVisited.clear();
+//  mCheckedStates = 1;
+
+//  if (mInitialBoard == mFinalBoard)
+//    return true;
+
+//  if (!Utils::isSolvable(cInitialBoard) || !solve())
+//    return false;
+
+//  storeResult();
+//  return true;
+
+  if (!initializeSearchLoop(cInitialBoard, cType))
+    return false;
+  while (!isLoopEmpty() && !processNextState());
+  return mIsSolved;
+}
+
+bool Solver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
 {
   mInitialBoard = cInitialBoard;
   mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
@@ -19,22 +51,17 @@ bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
 
   mResult.clear();
   mVisited.clear();
-  mCheckedStates = 1;
+  mCheckedStates = 0;
+  mIsSolved = false;
 
-  if (mInitialBoard == mFinalBoard)
-    return true;
-
-  if (!Utils::isSolvable(cInitialBoard) || !solve())
-    return false;
-
-  storeResult();
-  return true;
+  return Utils::isSolvable(cInitialBoard);
 }
 
 void Solver::storeResult()
 {
+  mResult.clear();
+
   Board board = mFinalBoard;
-  assert(mVisited.find(mFinalBoard) != mVisited.end());
   State state = *(mVisited.find(mFinalBoard));
   while (state.direction != Direction::None) {
     mResult.push_back(state.direction);
@@ -91,11 +118,6 @@ std::vector<Direction> Solver::generatePossibleDirections(const Board &cBoard)
   }
   return possibleDirections;
 }
-
-//bool Solver::solve()
-//{
-//  return false;
-//}
 
 void Solver::setOrder(const std::vector<Direction> &order)
 {

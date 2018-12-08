@@ -1,13 +1,22 @@
 #include "boardmodel.h"
+#include "config.h"
+#include "solverworker.h"
 #include "core.h"
 #include <sstream>
-#include <memory>
-#include <QScopedPointer>
-#include "solvethread.h"
+#include <QThread>
 
 BoardModel::BoardModel(QObject *parent)
   : QObject (parent)
 { }
+
+BoardModel::~BoardModel()
+{
+  // they will be deleted automatically because of delateLater slot
+//  if (m_worker != nullptr)
+//    delete m_worker;
+//  if (m_thread != nullptr)
+//    delete m_thread;
+}
 
 bool BoardModel::resetBoard(int rows, int columns)
 {
@@ -31,109 +40,120 @@ void BoardModel::setValueAt(int row, int column, int value)
   m_board.setValueAt(row, column, value);
 }
 
-bool BoardModel::solve(QString algorithmText, QString orderText, int heuristicIndex)
+int BoardModel::solve(QString algorithmText, QString orderText, int heuristicIndex)
 {
   if (!Utils::isSolvable(m_board)) {
-    m_result = "Board is not solvable.";
+    m_answear.result = "Board is not solvable.";
     return false;
   }
-
+  
   if (m_board == Utils::constructFinalBoard(m_board.rows(), m_board.columns())) {
-    m_result = "Board is already solved.";
+    m_answear.result = "Board is already solved.";
     return false;
   }
-
+  
+  Config config;
+  config.board = m_board;
+  
   bool isError = false;
   if (algorithmText == "BFS")
-    mp_solver = QSharedPointer<Solver>(new BfsSolver());
+    config.algorithm = Solver::Bfs;
   else if (algorithmText == "DFS")
-    mp_solver = QSharedPointer<Solver>(new DfsSolver());
+    config.algorithm = Solver::Dfs;
   else if (algorithmText == "IDFS")
-    mp_solver = QSharedPointer<Solver>(new IdfsSolver());
+    config.algorithm = Solver::Idfs;
   else if (algorithmText == "Best-First")
-    mp_solver = QSharedPointer<Solver>(new BestFirstSolver());
+    config.algorithm = Solver::BestFirst;
   else if (algorithmText == "A*")
-    mp_solver = QSharedPointer<Solver>(new AStarSolver());
+    config.algorithm = Solver::AStar;
   else if (algorithmText == "SMA*")
-    mp_solver = QSharedPointer<Solver>(new SmaStarSolver());
+    config.algorithm = Solver::SmaStar;
   else
     isError = true;
-
+  
   if (orderText == "RAND") {
-    mp_solver->randomOrder(true);
+    config.isRandomOrder = true;
   } else {
-    std::vector<Direction> order;
     for (auto &x : orderText) {
       if (x == 'L')
-        order.push_back(Direction::Left);
+        config.order.push_back(Direction::Left);
       else if (x == 'R')
-        order.push_back(Direction::Right);
+        config.order.push_back(Direction::Right);
       else if (x == 'U')
-        order.push_back(Direction::Up);
+        config.order.push_back(Direction::Up);
       else if (x == 'D')
-        order.push_back(Direction::Down);
+        config.order.push_back(Direction::Down);
       else
         isError = true;
     }
-    mp_solver->setOrder(order);
   }
-
-  Heuristic::Type heuristic;
+  
   if (heuristicIndex == 0)
-    heuristic = Heuristic::AllTaxicab;
+    config.heuristic = Heuristic::AllTaxicab;
   else if (heuristicIndex == 1)
-    heuristic = Heuristic::ZeroTaxicab;
+    config.heuristic = Heuristic::ZeroTaxicab;
   else if (heuristicIndex == 2)
-    heuristic = Heuristic::WrongCount;
+    config.heuristic = Heuristic::WrongCount;
   else
     isError = true;
-
+  
   if (isError) {
-    m_result = "Error";
+    m_answear.result = "Error";
     return false;
   }
 
-  mp_solveThread = new SolveThread(m_board, mp_solver, heuristic);
-  connect(mp_solveThread, &SolveThread::solved, this, &BoardModel::handleSolved);
-  connect(mp_solveThread, &SolveThread::finished, mp_solveThread, &QObject::deleteLater);
-  mp_solveThread->start();
+  // they will be deleted automatically because of delateLater slot
+//  if (m_thread != nullptr) {
+//    m_thread->requestInterruption();
+//    delete m_thread;
+//  }
+//  if (m_worker != nullptr)
+//    delete m_worker;
 
+  m_answear = {};
+  m_worker = new SolverWorker(config, &m_answear);
+  m_thread = new QThread();
+
+  m_worker->moveToThread(m_thread);
+  connect(m_thread, SIGNAL(started()), m_worker, SLOT(solve()));
+  connect(m_worker, SIGNAL(solved()), this, SLOT(handleSolved()));
+  connect(m_worker, SIGNAL(solved()), m_worker, SLOT(deleteLater()));
+  connect(m_worker, SIGNAL(solved()), m_thread, SLOT(quit()));
+  connect(m_thread, SIGNAL(finished()), m_thread, SLOT(deleteLater()));
+  m_thread->start();
+  
   return true;
 }
 
-void BoardModel::handleSolved(bool isSolved)
+void BoardModel::handleSolved()
 {
-  if (isSolved) {
-    std::stringstream sstream;
-    for (auto &d : mp_solver->result())
-      sstream << d;
-    m_result = QString::fromStdString(sstream.str());
-    emit solved(true);
-    return;
-  }
-
-  m_result = "Failed to solve board.";
-  emit solved(false);
+  emit solved(m_answear.isSolved);
 }
 
 QString BoardModel::resultText() const
 {
-  return m_result;
+  return m_answear.result;
 }
 
 int BoardModel::checkedStates() const
 {
-  return mp_solver->checkedStates();
+  return m_answear.checkStates;
 }
 
 int BoardModel::resultLength() const
 {
-  return mp_solver->result().size();
+  return m_answear.result.size();
 }
 
 void BoardModel::cancelSolving()
 {
-  mp_solveThread->terminate();
-  mp_solveThread->wait();
+  m_thread->requestInterruption();
 }
+
+bool BoardModel::wasInterrupted() const
+{
+  return m_answear.wasInterrupted;
+}
+
+
 

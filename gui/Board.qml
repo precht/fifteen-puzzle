@@ -5,7 +5,6 @@ Item {
   id: board;
   width: 4 * Props.cellSize;
   height: 4 * Props.cellSize;
-//  focus: true;
   property var pressedCells: [];
 
   function createGrid(rows, columns) {
@@ -17,7 +16,7 @@ Item {
     grid.children = ""; // remove existing cells
     for (var iChild = 0; iChild < gridSize; iChild++) {
       var object = cellComponent.createObject(grid);
-      object.value = boardModel.valueAt(iChild / columns, iChild % columns);
+      object.setValue(boardModel.valueAt(iChild / columns, iChild % columns));
       object.index = iChild;
     }
   }
@@ -32,11 +31,18 @@ Item {
       var tmp = boardModel.valueAt(row1, column1);
       boardModel.setValueAt(row1, column1, boardModel.valueAt(row2, column2));
       boardModel.setValueAt(row2, column2, tmp);
-      grid.children[index1].value = boardModel.valueAt(row1, column1);
-      grid.children[index2].value = boardModel.valueAt(row2, column2);
+      grid.children[index1].setValue(boardModel.valueAt(row1, column1));
+      grid.children[index2].setValue(boardModel.valueAt(row2, column2));
     }
     pressedCells = [];
     resetColors();
+  }
+
+  function setCellValue(index, value) {
+    var row = index / grid.columns;
+    var column = index % grid.columns;
+    boardModel.setValueAt(row, column, value);
+    grid.children[index].setValue(value);
   }
 
   function resetColors() {
@@ -60,7 +66,6 @@ Item {
     anchors.centerIn: parent;
     width: rows * Props.cellSize;
     height: columns * Props.cellSize;
-//    focus: false;
   }
 
   Connections {
@@ -75,24 +80,14 @@ Item {
 
   Component.onCompleted: {
     createGrid(4, 4);
-    boardModel.setValueAt(0, 0, 5);   grid.children[0].value = 5;
-    boardModel.setValueAt(0, 1, 1);   grid.children[1].value = 1;
-    boardModel.setValueAt(0, 2, 2);   grid.children[2].value = 2;
-    boardModel.setValueAt(0, 3, 3);   grid.children[3].value = 3;
+    var values = [
+          5, 1, 2, 3,
+          9, 10, 6, 4,
+          13, 0, 7, 8,
+          14, 15, 11, 12
+        ];
 
-    boardModel.setValueAt(1, 0, 9);   grid.children[4].value = 9;
-    boardModel.setValueAt(1, 1, 10);  grid.children[5].value = 10;
-    boardModel.setValueAt(1, 2, 6);   grid.children[6].value = 6;
-    boardModel.setValueAt(1, 3, 4);   grid.children[7].value = 4;
-
-    boardModel.setValueAt(2, 0, 13);  grid.children[8].value = 13;
-    boardModel.setValueAt(2, 1, 0);   grid.children[9].value = 0;
-    boardModel.setValueAt(2, 2, 7);   grid.children[10].value = 7;
-    boardModel.setValueAt(2, 3, 8);   grid.children[11].value = 8;
-
-    boardModel.setValueAt(3, 0, 14);  grid.children[12].value = 14;
-    boardModel.setValueAt(3, 1, 15);  grid.children[13].value = 15;
-    boardModel.setValueAt(3, 2, 11);  grid.children[14].value = 11;
-    boardModel.setValueAt(3, 3, 12);  grid.children[15].value = 12;
+    for (var i = 0; i < values.length; i++)
+      setCellValue(i, values[i]);
   }
 }

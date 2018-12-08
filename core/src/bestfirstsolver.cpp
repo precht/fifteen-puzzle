@@ -1,49 +1,6 @@
 #include "bestfirstsolver.h"
 #include "utils.h"
-
-bool BestFirstSolver::solve()
-{
-  mPriorityQueue = {};
-  Board board = mInitialBoard;
-  BFState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
-  mVisited.insert(mInitialBoard);
-
-  auto possibleDirections = generatePossibleDirections(mInitialBoard);
-  for (auto &direction : possibleDirections) {
-    state.direction = direction;
-    mPriorityQueue.push(state);
-  }
-
-  while (!mPriorityQueue.empty()) {
-    state = mPriorityQueue.top();
-    mPriorityQueue.pop();
-    mCheckedStates++;
-
-    board.setMemory(state.memory);
-    Utils::makeMovement(board, state.direction);
-    state.memory = board.memory();
-
-    if (mVisited.find(board) != mVisited.end())
-      continue;
-    mVisited.insert(state);
-
-    if (board == mFinalBoard)
-      return true;
-
-    state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
-
-    const Direction currentDirection = state.direction;
-    possibleDirections = generatePossibleDirections(board);
-    for (auto &direction : possibleDirections) {
-      if (Direction::isReverseDirection(direction, currentDirection))
-        continue;
-      state.direction = direction;
-      mPriorityQueue.push(state);
-    }
-  }
-
-  return false;
-}
+#include <cassert>
 
 BestFirstSolver::BFState::BFState(const Board &cBoard, const uint8_t cEstimatedCost)
   : memory(cBoard.memory()), estimatedCost(cEstimatedCost)
@@ -59,7 +16,55 @@ bool BestFirstSolver::Greater::operator()(const BFState &cLhs, const BFState &cR
   return (cLhs.estimatedCost > cRhs.estimatedCost);
 }
 
-Solver* BestFirstSolver::clone() const
+
+bool BestFirstSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
 {
-  return new BestFirstSolver(dynamic_cast<const BestFirstSolver&>(*this));
+  if (Solver::initializeSearchLoop(cInitialBoard, cType) == false)
+    return false;
+
+  mPriorityQueue = {};
+  BFState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
+  mPriorityQueue.push(state);
+  return true;
+}
+
+bool BestFirstSolver::isLoopEmpty() const
+{
+  return (mPriorityQueue.empty() || mIsSolved);
+}
+
+bool BestFirstSolver::processNextState()
+{
+  assert(!isLoopEmpty());
+  Board board = mInitialBoard;
+  BFState state = mPriorityQueue.top();
+  mPriorityQueue.pop();
+  mCheckedStates++;
+
+  board.setMemory(state.memory);
+  Utils::makeMovement(board, state.direction);
+  state.memory = board.memory();
+
+  if (mVisited.find(board) != mVisited.end())
+    return false;
+  mVisited.insert(state);
+
+  if (board == mFinalBoard) {
+    mIsSolved = true;
+    storeResult();
+    return true;
+  }
+
+  state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
+
+  const Direction currentDirection = state.direction;
+  auto possibleDirections = generatePossibleDirections(board);
+  for (auto &direction : possibleDirections) {
+    if (Direction::isReverseDirection(direction, currentDirection))
+      continue;
+    state.direction = direction;
+    mPriorityQueue.push(state);
+  }
+
+  return false;
 }

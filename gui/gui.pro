@@ -17,7 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     boardmodel.cpp \
-    solvethread.cpp
+    solverworker.cpp
 
 RESOURCES += qml.qrc
 
@@ -40,4 +40,6 @@ DISTFILES +=
 
 HEADERS += \
     boardmodel.h \
-    solvethread.h
+    config.h \
+    answear.h \
+    solverworker.h

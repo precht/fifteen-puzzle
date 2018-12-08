@@ -7,6 +7,7 @@ using namespace testing;
 
 #include "core.h"
 #include <iostream>
+#include <vector>
 
 class Solvers : public ::testing::Test
 {
@@ -16,102 +17,27 @@ protected:
 
   void SetUp() override
   {
+    std::vector<uint8_t> values;
+
     b1 = Board(3, 3);
-    b1.setValueAt(0, 0, 7);
-    b1.setValueAt(0, 1, 4);
-    b1.setValueAt(0, 2, 3);
-
-    b1.setValueAt(1, 0, 8);
-    b1.setValueAt(1, 1, 0);
-    b1.setValueAt(1, 2, 5);
-
-    b1.setValueAt(2, 0, 2);
-    b1.setValueAt(2, 1, 1);
-    b1.setValueAt(2, 2, 6);
+    values = {
+      7, 4, 3,
+      8, 0, 5,
+      2, 1, 6
+    };
+    for (uint8_t i = 0; i < 9; i++)
+      b1.setValueAt(i / 3, i % 3, values[i]);
 
     b2 = Board(4, 4);
-    b2.setValueAt(0, 0, 5);
-    b2.setValueAt(0, 1, 1);
-    b2.setValueAt(0, 2, 2);
-    b2.setValueAt(0, 3, 3);
+    values = {
+      5, 1, 2, 3,
+      9, 10, 6, 4,
+      13, 0, 7, 8,
+      14, 15, 11, 12
+    };
+    for (uint8_t i = 0; i < 16; i++)
+      b2.setValueAt(i / 4, i % 4, values[i]);
 
-    b2.setValueAt(1, 0, 9);
-    b2.setValueAt(1, 1, 10);
-    b2.setValueAt(1, 2, 6);
-    b2.setValueAt(1, 3, 4);
-
-    b2.setValueAt(2, 0, 13);
-    b2.setValueAt(2, 1, 0);
-    b2.setValueAt(2, 2, 7);
-    b2.setValueAt(2, 3, 8);
-
-    b2.setValueAt(3, 0, 14);
-    b2.setValueAt(3, 1, 15);
-    b2.setValueAt(3, 2, 11);
-    b2.setValueAt(3, 3, 12);
-
-//    b3 = Board(4, 4);
-//    b3.setValueAt(0, 0, 0);
-//    b3.setValueAt(0, 1, 1);
-//    b3.setValueAt(0, 2, 3);
-//    b3.setValueAt(0, 3, 4);
-
-//    b3.setValueAt(1, 0, 5);
-//    b3.setValueAt(1, 1, 2);
-//    b3.setValueAt(1, 2, 6);
-//    b3.setValueAt(1, 3, 8);
-
-//    b3.setValueAt(2, 0, 9);
-//    b3.setValueAt(2, 1, 10);
-//    b3.setValueAt(2, 2, 7);
-//    b3.setValueAt(2, 3, 11);
-
-//    b3.setValueAt(3, 0, 13);
-//    b3.setValueAt(3, 1, 14);
-//    b3.setValueAt(3, 2, 15);
-//    b3.setValueAt(3, 3, 12);
-
-//    b4 = Board(4, 4);
-//    b4.setValueAt(0, 0, 1);
-//    b4.setValueAt(0, 1, 2);
-//    b4.setValueAt(0, 2, 3);
-//    b4.setValueAt(0, 3, 4);
-
-//    b4.setValueAt(1, 0, 5);
-//    b4.setValueAt(1, 1, 6);
-//    b4.setValueAt(1, 2, 7);
-//    b4.setValueAt(1, 3, 8);
-
-//    b4.setValueAt(2, 0, 9);
-//    b4.setValueAt(2, 1, 0);
-//    b4.setValueAt(2, 2, 11);
-//    b4.setValueAt(2, 3, 12);
-
-//    b4.setValueAt(3, 0, 13);
-//    b4.setValueAt(3, 1, 10);
-//    b4.setValueAt(3, 2, 14);
-//    b4.setValueAt(3, 3, 15);
-
-//    b4 = Board(4, 4);
-//    b4.setValueAt(0, 0, );
-//    b4.setValueAt(0, 1, );
-//    b4.setValueAt(0, 2, );
-//    b4.setValueAt(0, 3, );
-
-//    b4.setValueAt(1, 0, );
-//    b4.setValueAt(1, 1, );
-//    b4.setValueAt(1, 2, );
-//    b4.setValueAt(1, 3, );
-
-//    b4.setValueAt(2, 0, );
-//    b4.setValueAt(2, 1, );
-//    b4.setValueAt(2, 2, );
-//    b4.setValueAt(2, 3, );
-
-//    b4.setValueAt(3, 0, );
-//    b4.setValueAt(3, 1, );
-//    b4.setValueAt(3, 2, );
-//    b4.setValueAt(3, 3, );
   }
 
   void check()
@@ -242,7 +168,7 @@ TEST_F(Solvers, checkDfs_board3x3)
   check();
 }
 
-// // Too complex board for dfs - takes a lot of time, test timeout
+ // Too complex board for dfs - takes a lot of time, test timeout
 //TEST_F(Solvers, checkDfs_board4x4)
 //{
 //  board = b2;

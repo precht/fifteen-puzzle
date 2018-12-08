@@ -8,8 +8,10 @@ class BfsSolver : public Solver
 {
   std::queue<State> mQueue;
 
-  bool solve() override;
-  Solver* clone() const override;
+public:
+  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool isLoopEmpty() const override;
+  bool processNextState() override;
 };
 
 #endif // BFSSOLVER_H

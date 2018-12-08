@@ -24,12 +24,13 @@ public:
     bool operator()(const AState &cLhs, const AState &cRhs) const;
   };
 
+  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool isLoopEmpty() const override;
+  bool processNextState() override;
+
 private:
   std::priority_queue<AState, std::vector<AState>, Greater> mPriorityQueue;
   Heuristic mHeuristic;
-
-  bool solve() override;
-  Solver* clone() const override;
 };
 
 #endif // ASTARSOLVER_H

@@ -3,7 +3,6 @@
 
 #include "solver.h"
 #include <set>
-#include <map>
 #include <unordered_map>
 #include <climits>
 
@@ -42,16 +41,15 @@ private:
 
   SetState mFinalSetState;
 
-  bool solve() override;
+public:
+  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool isLoopEmpty() const override;
+  bool processNextState() override;
+
+private:
   void insert(const uint64_t cMemory, const GraphState cGraphState);
   void update(const SetState &setState);
   void storeResult() override;
-  Solver* clone() const override;
-  void print();
-
-//  uint64_t mCounter = 0;
-//  std::unordered_map<uint64_t, uint64_t> mIds;
-
 };
 
 #endif // SMASTARSOLVER_H

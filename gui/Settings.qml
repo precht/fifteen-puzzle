@@ -39,6 +39,8 @@ Item {
   }
 
   function updateResults(isSolved) {
+    if (boardModel.wasInterrupted())
+      return;
     resultRectangle.visible = true;
     resultArea.text = boardModel.resultText();
     if (isSolved === true) {
@@ -82,7 +84,7 @@ Item {
   // ------------------------- Layout -------------------------
 
   Column {
-    Item { height: 20; width: 1; } // Top space
+    Item { height: 25; width: 1; } // Top space
     Row { // Row for choosing algorithm
       height: 50;
 
@@ -251,7 +253,7 @@ Item {
     Rectangle {
       id: resultRectangle
       width: settings.width - 20;
-      height: 160;
+      height: 170;
       border.width: 1;
       border.color: "lightgrey";
       visible: false;
