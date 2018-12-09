@@ -15,7 +15,7 @@ class SolverWorker : public QObject
   Answear *mp_answear;
 
 public:
-  SolverWorker(const Config &config, Answear *p_answear);
+  SolverWorker(const Config &c_config, Answear *p_answear);
 
 public slots:
   void solve();

@@ -6,10 +6,10 @@
 
 class DfsSolver : public Solver
 {
-  std::stack<State> mStack;
+  std::stack<State> m_stack;
 
 public:
-  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type) override;
   bool isLoopEmpty() const override;
   bool processNextState() override;
 };

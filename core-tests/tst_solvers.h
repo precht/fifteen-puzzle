@@ -7,7 +7,6 @@ using namespace testing;
 
 #include "core.h"
 #include <iostream>
-#include <vector>
 
 class Solvers : public ::testing::Test
 {
@@ -17,27 +16,18 @@ protected:
 
   void SetUp() override
   {
-    std::vector<uint8_t> values;
+    b1 = Board(3, 3, {
+                 7, 4, 3,
+                 8, 0, 5,
+                 2, 1, 6
+               });
 
-    b1 = Board(3, 3);
-    values = {
-      7, 4, 3,
-      8, 0, 5,
-      2, 1, 6
-    };
-    for (uint8_t i = 0; i < 9; i++)
-      b1.setValueAt(i / 3, i % 3, values[i]);
-
-    b2 = Board(4, 4);
-    values = {
-      5, 1, 2, 3,
-      9, 10, 6, 4,
-      13, 0, 7, 8,
-      14, 15, 11, 12
-    };
-    for (uint8_t i = 0; i < 16; i++)
-      b2.setValueAt(i / 4, i % 4, values[i]);
-
+    b2 = Board(4, 4, {
+                 5,  1,  2,  3,
+                 9,  10, 6,  4,
+                 13, 0,  7,  8,
+                 14, 15, 11, 12
+               });
   }
 
   void check()
@@ -168,7 +158,7 @@ TEST_F(Solvers, checkDfs_board3x3)
   check();
 }
 
- // Too complex board for dfs - takes a lot of time, test timeout
+// Too complex board for dfs - takes a lot of time, test timeout
 //TEST_F(Solvers, checkDfs_board4x4)
 //{
 //  board = b2;

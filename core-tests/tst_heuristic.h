@@ -17,19 +17,9 @@ protected:
 
   void SetUp() override
   {
-    board = Board(3, 3);
-    board.setValueAt(0, 0, 1);
-    board.setValueAt(0, 1, 0);
-    board.setValueAt(0, 2, 3);
-
-    board.setValueAt(1, 0, 4);
-    board.setValueAt(1, 1, 2);
-    board.setValueAt(1, 2, 6);
-
-    board.setValueAt(2, 0, 7);
-    board.setValueAt(2, 1, 5);
-    board.setValueAt(2, 2, 8);
-
+    board = Board(3, 3, { 1, 0, 3,
+                          4, 2, 6,
+                          7, 5, 8 });
     expect = Utils::constructFinalBoard(3, 3);
   }
 };

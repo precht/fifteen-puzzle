@@ -3,56 +3,56 @@
 #include <vector>
 #include <ostream>
 
-bool Utils::isSolvable(const Board &cBoard)
+bool Utils::isSolvable(const Board &c_board)
 {
-  if (cBoard.size() == 0)
+  if (c_board.size() == 0)
     return false;
   std::vector<bool> isValue(16);
-  for (uint8_t index = 0; index < cBoard.size(); index++)
-    isValue[cBoard.valueAt(index / cBoard.columns(), index % cBoard.columns())] = true;
-  for (uint8_t index = 0; index < cBoard.size(); index++)
+  for (uint8_t index = 0; index < c_board.size(); index++)
+    isValue[c_board.valueAt(index / c_board.columns(), index % c_board.columns())] = true;
+  for (uint8_t index = 0; index < c_board.size(); index++)
     if (!isValue[index])
       return false;
 
   uint32_t inversionCount = 0;
-  for (uint8_t iLater = 1; iLater < cBoard.size(); iLater++) {
+  for (uint8_t iLater = 1; iLater < c_board.size(); iLater++) {
     for (uint8_t iFormer = 0; iFormer < iLater; iFormer++) {
-      auto former = cBoard.valueAt(iFormer / cBoard.columns(), iFormer % cBoard.columns());
-      auto later = cBoard.valueAt(iLater / cBoard.columns(), iLater % cBoard.columns());
+      auto former = c_board.valueAt(iFormer / c_board.columns(), iFormer % c_board.columns());
+      auto later = c_board.valueAt(iLater / c_board.columns(), iLater % c_board.columns());
       if (later != 0 && former > later) inversionCount++;
     }
   }
 
   // https://www.geeksforgeeks.org/check-instance-15-puzzle-solvable/
-  auto zeroPosition = cBoard.getPosition(0);
-  if ((cBoard.columns() % 2 == 1) || ((cBoard.rows() - zeroPosition.row) % 2 == 1))
+  auto zeroPosition = c_board.getPosition(0);
+  if ((c_board.columns() % 2 == 1) || ((c_board.rows() - zeroPosition.row) % 2 == 1))
     return inversionCount % 2 == 0;
   else
     return inversionCount % 2 == 1;
 }
 
-Board Utils::constructFinalBoard(const uint8_t cRows, const uint8_t cColumns)
+Board Utils::constructFinalBoard(const uint8_t c_rows, const uint8_t c_columns)
 {
-  Board board = Board(cRows, cColumns);
-  const uint8_t cSize = cRows * cColumns;
+  Board board = Board(c_rows, c_columns);
+  const uint8_t cSize = c_rows * c_columns;
   for (uint8_t index = 0; index < cSize; index++) {
-    uint8_t row = index / cColumns;
-    uint8_t column = index % cColumns;
+    uint8_t row = index / c_columns;
+    uint8_t column = index % c_columns;
     uint8_t value = (index + 1) % cSize;
     board.setValueAt(row, column, value);
   }
   return board;
 }
 
-void Utils::makeMovement(Board &board, Direction direction)
+void Utils::makeMovement(Board &r_board, Direction direction)
 {
-  auto zeroPosition = board.getPosition(0);
+  auto zeroPosition = r_board.getPosition(0);
 
   bool isCorrectDirection = true;
   switch (direction) {
-  case Direction::Left: isCorrectDirection = (zeroPosition.column + 1 != board.columns()); break;
+  case Direction::Left: isCorrectDirection = (zeroPosition.column + 1 != r_board.columns()); break;
   case Direction::Right: isCorrectDirection = (zeroPosition.column != 0); break;
-  case Direction::Up: isCorrectDirection = (zeroPosition.row + 1 != board.rows()); break;
+  case Direction::Up: isCorrectDirection = (zeroPosition.row + 1 != r_board.rows()); break;
   case Direction::Down: isCorrectDirection = (zeroPosition.row != 0); break;
   default:; // do nothing
   }
@@ -62,30 +62,30 @@ void Utils::makeMovement(Board &board, Direction direction)
   uint8_t value;
   switch (direction) {
   case Direction::Left:
-    value = board.valueAt(zeroPosition.row, zeroPosition.column + 1);
-    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    board.setValueAt(zeroPosition.row, zeroPosition.column + 1, 0);
+    value = r_board.valueAt(zeroPosition.row, zeroPosition.column + 1);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column + 1, 0);
     break;
   case Direction::Right:
-    value = board.valueAt(zeroPosition.row, zeroPosition.column - 1);
-    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    board.setValueAt(zeroPosition.row, zeroPosition.column - 1, 0);
+    value = r_board.valueAt(zeroPosition.row, zeroPosition.column - 1);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column - 1, 0);
     break;
   case Direction::Up:
-    value = board.valueAt(zeroPosition.row + 1, zeroPosition.column);
-    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
+    value = r_board.valueAt(zeroPosition.row + 1, zeroPosition.column);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    r_board.setValueAt(zeroPosition.row + 1, zeroPosition.column, 0);
     break;
   case Direction::Down:
-    value = board.valueAt(zeroPosition.row - 1, zeroPosition.column);
-    board.setValueAt(zeroPosition.row, zeroPosition.column, value);
-    board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
+    value = r_board.valueAt(zeroPosition.row - 1, zeroPosition.column);
+    r_board.setValueAt(zeroPosition.row, zeroPosition.column, value);
+    r_board.setValueAt(zeroPosition.row - 1, zeroPosition.column, 0);
     break;
   default:; // do nothing
   }
 }
 
-void Utils::reverseMovement(Board &board, Direction direction)
+void Utils::reverseMovement(Board &r_board, Direction direction)
 {
   switch (direction) {
   case Direction::Left: direction = Direction::Right; break;
@@ -94,30 +94,30 @@ void Utils::reverseMovement(Board &board, Direction direction)
   case Direction::Down: direction = Direction::Up; break;
   default:; // do nothing
   }
-  Utils::makeMovement(board, direction);
+  Utils::makeMovement(r_board, direction);
 }
 
-void Utils::printBoard(const Board &cBoard, std::ostream &output)
+void Utils::printBoard(const Board &c_board, std::ostream &r_output)
 {
-  const uint8_t cColumns = cBoard.columns();
-  const auto cMaxDigitCount = std::to_string(cBoard.size()).size();
+  const uint8_t c_columns = c_board.columns();
+  const auto cMaxDigitCount = std::to_string(c_board.size()).size();
 
-  output << std::string(cColumns * (cMaxDigitCount + 1) + 3, '*') << '\n';
-  for (uint8_t iRow = 0; iRow < cBoard.rows(); iRow++) {
-    output << "* ";
-    for (uint8_t iColumn = 0; iColumn < cColumns; iColumn++) {
-      const auto cValue = cBoard.valueAt(iRow, iColumn);
-      std::string stringValue = std::to_string(cValue);
-      if (cValue == 0)
+  r_output << std::string(c_columns * (cMaxDigitCount + 1) + 3, '*') << '\n';
+  for (uint8_t iRow = 0; iRow < c_board.rows(); iRow++) {
+    r_output << "* ";
+    for (uint8_t iColumn = 0; iColumn < c_columns; iColumn++) {
+      const auto c_value = c_board.valueAt(iRow, iColumn);
+      std::string stringValue = std::to_string(c_value);
+      if (c_value == 0)
         stringValue = " ";
-      output << stringValue << std::string(cMaxDigitCount - stringValue.size() + 1, ' ');
+      r_output << stringValue << std::string(cMaxDigitCount - stringValue.size() + 1, ' ');
     }
-    output << "*\n";
+    r_output << "*\n";
   }
-  output << std::string(cColumns * (cMaxDigitCount + 1) + 3, '*') << '\n';
+  r_output << std::string(c_columns * (cMaxDigitCount + 1) + 3, '*') << '\n';
 }
 
-Solver *Utils::constructSolver(Solver::Algorithm algorithm)
+Solver* Utils::constructSolver(Solver::Algorithm algorithm)
 {
   switch (algorithm) {
   case Solver::Bfs: return new BfsSolver();

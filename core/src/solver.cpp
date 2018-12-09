@@ -9,123 +9,104 @@
 Solver::Solver()
 {
   std::random_device rd;
-  mRandomGenerator = std::mt19937(rd());
-//  std::cout << "solver created" << std::endl;
+  m_randomGenerator = std::mt19937(rd());
 }
 
 Solver::~Solver()
+{ }
+
+bool Solver::solve(const Board &c_initialBoard, const Heuristic::Type c_type)
 {
-//  std::cout << "solver deleted" << std::endl;
-}
-
-bool Solver::solve(const Board &cInitialBoard, const Heuristic::Type cType)
-{
-//  mInitialBoard = cInitialBoard;
-//  mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
-//  mDistance = cType;
-
-//  mResult.clear();
-//  mVisited.clear();
-//  mCheckedStates = 1;
-
-//  if (mInitialBoard == mFinalBoard)
-//    return true;
-
-//  if (!Utils::isSolvable(cInitialBoard) || !solve())
-//    return false;
-
-//  storeResult();
-//  return true;
-
-  if (!initializeSearchLoop(cInitialBoard, cType))
+  if (!initializeSearchLoop(c_initialBoard, c_type))
     return false;
+
   while (!isLoopEmpty() && !processNextState());
-  return mIsSolved;
+  return m_isSolved;
 }
 
-bool Solver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
+bool Solver::initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type)
 {
-  mInitialBoard = cInitialBoard;
-  mFinalBoard = Utils::constructFinalBoard(cInitialBoard.rows(), cInitialBoard.columns());
-  mDistance = cType;
+  m_initialBoard = c_initialBoard;
+  m_finalBoard = Utils::constructFinalBoard(c_initialBoard.rows(), c_initialBoard.columns());
+  m_distance = c_type;
 
-  mResult.clear();
-  mVisited.clear();
-  mCheckedStates = 0;
-  mIsSolved = false;
+  m_result.clear();
+  m_visited.clear();
+  m_checkedStates = 0;
+  m_isSolved = false;
 
-  return Utils::isSolvable(cInitialBoard);
+  return Utils::isSolvable(c_initialBoard);
 }
 
 void Solver::storeResult()
 {
-  mResult.clear();
+  m_result.clear();
 
-  Board board = mFinalBoard;
-  State state = *(mVisited.find(mFinalBoard));
+  Board board = m_finalBoard;
+  State state = *(m_visited.find(m_finalBoard));
   while (state.direction != Direction::None) {
-    mResult.push_back(state.direction);
+    m_result.push_back(state.direction);
     Utils::reverseMovement(board, state.direction);
-    assert(mVisited.find(board) != mVisited.end());
-    state = *(mVisited.find(board));
+    assert(m_visited.find(board) != m_visited.end());
+    state = *(m_visited.find(board));
   }
-  std::reverse(mResult.begin(), mResult.end());
+  std::reverse(m_result.begin(), m_result.end());
 }
 
 std::vector<Direction> Solver::result() const
 {
-  return mResult;
+  return m_result;
 }
 
 uint64_t Solver::checkedStates() const
 {
-  return mCheckedStates;
+  return m_checkedStates;
 }
 
-std::vector<Direction> Solver::generatePossibleDirections(const Board &cBoard)
+std::vector<Direction> Solver::generatePossibleDirections(const Board &c_board)
 {
   std::vector<Direction> possibleDirections;
-  auto zero = cBoard.getPosition(0);
-  if (mOrder.empty()) {
+  auto zero = c_board.getPosition(0);
+  if (m_order.empty()) {
     if (zero.row != 0)
       possibleDirections.push_back(Direction::Down);
-    if (zero.row != cBoard.rows() - 1)
+    if (zero.row != c_board.rows() - 1)
       possibleDirections.push_back(Direction::Up);
     if (zero.column != 0)
       possibleDirections.push_back(Direction::Right);
-    if (zero.column != cBoard.columns() - 1)
+    if (zero.column != c_board.columns() - 1)
       possibleDirections.push_back(Direction::Left);
     return possibleDirections;
   }
 
-  if (mIsRandomOrder)
-    std::shuffle(mOrder.begin(), mOrder.end(), mRandomGenerator);
+  if (m_isRandomOrder)
+    std::shuffle(m_order.begin(), m_order.end(), m_randomGenerator);
 
-  for (auto &x : mOrder) {
+  for (auto &x : m_order) {
     if (x == Direction::Down) {
       if (zero.row != 0)
         possibleDirections.push_back(x);
     } else if (x == Direction::Up) {
-      if (zero.row != cBoard.rows() - 1)
+      if (zero.row != c_board.rows() - 1)
         possibleDirections.push_back(x);
     } else if (x == Direction::Right) {
       if (zero.column != 0)
         possibleDirections.push_back(x);
     } else if (x == Direction::Left) {
-      if (zero.column != cBoard.columns() - 1)
+      if (zero.column != c_board.columns() - 1)
         possibleDirections.push_back(x);
     }
   }
   return possibleDirections;
 }
 
-void Solver::setOrder(const std::vector<Direction> &order)
+void Solver::setOrder(const std::vector<Direction> &c_order)
 {
-  mOrder = order;
+  m_order = c_order;
 }
 
 void Solver::randomOrder(bool isRandomOrder)
 {
-  mOrder = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
-  mIsRandomOrder = isRandomOrder;
+  m_order = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
+  m_isRandomOrder = isRandomOrder;
 }

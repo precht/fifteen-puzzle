@@ -30,19 +30,19 @@ public:
 
   struct Less
   {
-    bool operator()(const SetState &cLhs, const SetState &cRhs) const;
+    bool operator()(const SetState &c_lhs, const SetState &c_rhs) const;
   };
 
 private:
-  std::set<SetState, Less> mSet;
-  std::unordered_map<uint64_t, GraphState> mGraph;
-  Heuristic mHeuristic;
-  Less mLess;
+  std::set<SetState, Less> m_set;
+  std::unordered_map<uint64_t, GraphState> m_graph;
+  Heuristic m_heuristic;
+  Less m_less;
 
-  SetState mFinalSetState;
+  SetState m_finalSetState;
 
 public:
-  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type) override;
   bool isLoopEmpty() const override;
   bool processNextState() override;
 

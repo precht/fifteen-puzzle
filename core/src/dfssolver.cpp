@@ -2,39 +2,39 @@
 #include "utils.h"
 #include <cassert>
 
-bool DfsSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
+bool DfsSolver::initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type)
 {
-  if (Solver::initializeSearchLoop(cInitialBoard, cType) == false)
+  if (Solver::initializeSearchLoop(c_initialBoard, c_type) == false)
     return false;
 
-  mStack = {};
-  mStack.push({ mInitialBoard });
+  m_stack = {};
+  m_stack.push({ m_initialBoard });
   return true;
 }
 
 bool DfsSolver::isLoopEmpty() const
 {
-    return (mStack.empty() || mIsSolved);
+    return (m_stack.empty() || m_isSolved);
 }
 
 bool DfsSolver::processNextState()
 {
   assert(!isLoopEmpty());
-  Board board = mInitialBoard;
-  State state = mStack.top();
-  mStack.pop();
-  mCheckedStates++;
+  Board board = m_initialBoard;
+  State state = m_stack.top();
+  m_stack.pop();
+  m_checkedStates++;
 
   board.setMemory(state.memory);
   Utils::makeMovement(board, state.direction);
   state.memory = board.memory();
 
-  if (mVisited.find(board) != mVisited.end())
+  if (m_visited.find(board) != m_visited.end())
     return false;
-  mVisited.insert(state);
+  m_visited.insert(state);
 
-  if (board == mFinalBoard) {
-    mIsSolved = true;
+  if (board == m_finalBoard) {
+    m_isSolved = true;
     storeResult();
     return true;
   }
@@ -45,7 +45,7 @@ bool DfsSolver::processNextState()
     if (Direction::isReverseDirection(direction, currentDirection))
       continue;
     state.direction = direction;
-    mStack.push(state);
+    m_stack.push(state);
   }
 
   return false;

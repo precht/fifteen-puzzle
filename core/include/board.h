@@ -3,11 +3,12 @@
 
 #include "direction.h"
 #include <cstdint>
+#include <vector>
 
 class Board
 {
-  uint8_t mRows, mColumns;
-  uint64_t mMemory;
+  uint8_t m_rows, m_columns;
+  uint64_t m_memory;
 
 public:
   struct Position
@@ -17,22 +18,24 @@ public:
   };
 
   Board();
-  Board(const uint8_t cRows, const uint8_t cColumns);
+  Board(const uint8_t c_rows, const uint8_t c_columns);
+  Board(const uint8_t c_rows, const uint8_t c_columns, const std::vector<uint8_t> &c_values);
 
   uint8_t rows() const;
   uint8_t columns() const;
   uint8_t size() const;
   uint64_t memory() const;
-  void setMemory(const uint64_t &memory);
+  void setMemory(const uint64_t &c_memory);
 
-  uint8_t valueAt(const uint8_t cRow, const  uint8_t cColumn) const;
-  uint8_t valueAt(const Position cPosition) const;
-  void setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue);
-  void setValueAt(const Position cPosition, const uint8_t cValue);
+  uint8_t valueAt(const uint8_t c_row, const  uint8_t c_column) const;
+  uint8_t valueAt(const Position c_position) const;
+  void setValueAt(const uint8_t c_row, const uint8_t c_column, const uint8_t c_value);
+  void setValueAt(const Position c_position, const uint8_t c_value);
+  void setValues(const std::vector<uint8_t> &c_values);
 
-  Position getPosition(const uint8_t cValue) const;
-  bool operator==(const Board &cOther) const;
-  bool operator!=(const Board &cOther) const;
+  Position getPosition(const uint8_t c_value) const;
+  bool operator==(const Board &c_other) const;
+  bool operator!=(const Board &c_other) const;
 };
 
 #endif // BOARD_H

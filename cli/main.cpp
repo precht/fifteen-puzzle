@@ -193,7 +193,6 @@ int main(int argc, char* argv[])
 
   try {
     run(readArgs(argc, argv));
-
   } catch (CoreException &e) {
     cerr << "ERROR: " << e.what() << endl;
     return 1;

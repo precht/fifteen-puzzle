@@ -8,10 +8,10 @@ struct Heuristic
 {
   enum Type { WrongCount, ZeroTaxicab, AllTaxicab };
 
-  uint8_t operator()(const Board &cLhs, const Board &cRhs, const Type cType) const;
-  static uint8_t wrongCount(const Board& cLhs, const Board &cRhs);
-  static uint8_t allTaxicab(const Board& cLhs, const Board &cRhs);
-  static uint8_t zeroTaxicab(const Board& cLhs, const Board &cRhs);
+  uint8_t operator()(const Board &c_lhs, const Board &c_rhs, const Type c_type) const;
+  static uint8_t wrongCount(const Board& c_lhs, const Board &c_rhs);
+  static uint8_t allTaxicab(const Board& c_lhs, const Board &c_rhs);
+  static uint8_t zeroTaxicab(const Board& c_lhs, const Board &c_rhs);
 };
 
 #endif // HEURISTIC_H

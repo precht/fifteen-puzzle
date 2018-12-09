@@ -1,16 +1,16 @@
 #include "coreexception.h"
 
-CoreException::CoreException(const std::string &message)
-  : mMessage(message)
+CoreException::CoreException(const std::string &c_message)
+  : m_message(c_message)
 { }
 
-CoreException::CoreException(const std::string &file, const int line, const std::string &message)
+CoreException::CoreException(const std::string &c_file, const int c_line, const std::string &c_message)
 {
-  mMessage.append(file);
-  mMessage.append(" [");
-  mMessage.append(std::to_string(line));
-  mMessage.append("] : ");
-  mMessage.append(message);
+  m_message.append(c_file);
+  m_message.append(" [");
+  m_message.append(std::to_string(c_line));
+  m_message.append("] : ");
+  m_message.append(c_message);
 }
 
 CoreException::~CoreException() noexcept
@@ -18,5 +18,5 @@ CoreException::~CoreException() noexcept
 
 const char *CoreException::what() const noexcept
 {
-  return mMessage.c_str();
+  return m_message.c_str();
 }

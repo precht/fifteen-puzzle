@@ -3,85 +3,100 @@
 #include <vector>
 
 Board::Board()
-    : mRows(0), mColumns(0), mMemory(0)
+    : m_rows(0), m_columns(0), m_memory(0)
 { }
 
-Board::Board(const uint8_t cRows, const uint8_t cColumns)
-  : mRows(cRows), mColumns(cColumns), mMemory(0)
+Board::Board(const uint8_t c_rows, const uint8_t c_columns)
+  : m_rows(c_rows), m_columns(c_columns), m_memory(0)
 {
-  if (mRows * mColumns > 16)
+  if (m_rows * m_columns > 16)
     throw CoreException(__FILE__, __LINE__);
+}
+
+Board::Board(const uint8_t c_rows, const uint8_t c_columns, const std::vector<uint8_t> &c_values)
+  : Board(c_rows, c_columns)
+{
+  setValues(c_values);
 }
 
 uint8_t Board::rows() const
 {
-  return mRows;
+  return m_rows;
 }
 
 uint8_t Board::columns() const
 {
-  return mColumns;
+  return m_columns;
 }
 
 uint8_t Board::size() const
 {
-  return mRows * mColumns;
+  return m_rows * m_columns;
 }
 
 uint64_t Board::memory() const
 {
-  return mMemory;
+  return m_memory;
 }
 
-void Board::setMemory(const uint64_t &memory)
+void Board::setMemory(const uint64_t &c_memory)
 {
-    mMemory = memory;
+    m_memory = c_memory;
 }
 
-uint8_t Board::valueAt(const uint8_t cRow, const uint8_t cColumn) const
+uint8_t Board::valueAt(const uint8_t c_row, const uint8_t c_column) const
 {
-  if (cRow >= mRows || cColumn >= mColumns)
+  if (c_row >= m_rows || c_column >= m_columns)
     throw CoreException(__FILE__, __LINE__);
-  const auto cFirstBitPosition = (cRow * mColumns + cColumn) << 2;
-  return (mMemory >> cFirstBitPosition) & 0b1111;
+  const auto cFirstBitPosition = (c_row * m_columns + c_column) << 2;
+  return (m_memory >> cFirstBitPosition) & 0b1111;
 }
 
-uint8_t Board::valueAt(const Position cPosition) const
+uint8_t Board::valueAt(const Position c_position) const
 {
-  return valueAt(cPosition.row, cPosition.column);
+  return valueAt(c_position.row, c_position.column);
 }
 
-void Board::setValueAt(const uint8_t cRow, const uint8_t cColumn, const uint8_t cValue)
+void Board::setValueAt(const uint8_t c_row, const uint8_t c_column, const uint8_t c_value)
 {
-  if (cRow >= mRows || cColumn >= mColumns || cValue >= 16)
+  if (c_row >= m_rows || c_column >= m_columns || c_value >= 16)
     throw CoreException(__FILE__, __LINE__);
-  const auto cFirstBitPosition = (cRow * mColumns + cColumn) << 2;
-  mMemory &= ~(static_cast<uint64_t>(0b1111) << cFirstBitPosition);
-  mMemory |= (static_cast<uint64_t>(cValue) << cFirstBitPosition);
+  const auto cFirstBitPosition = (c_row * m_columns + c_column) << 2;
+  m_memory &= ~(static_cast<uint64_t>(0b1111) << cFirstBitPosition);
+  m_memory |= (static_cast<uint64_t>(c_value) << cFirstBitPosition);
 }
 
-void Board::setValueAt(const Position cPosition, const uint8_t cValue)
+void Board::setValueAt(const Position c_position, const uint8_t c_value)
 {
-  setValueAt(cPosition.row, cPosition.column, cValue);
+  setValueAt(c_position.row, c_position.column, c_value);
 }
 
-Board::Position Board::getPosition(const uint8_t cValue) const
+void Board::setValues(const std::vector<uint8_t> &c_values)
 {
-  for (uint8_t iRow = 0; iRow < mRows; iRow++)
-    for (uint8_t iColumn = 0; iColumn < mColumns; iColumn++)
-      if (valueAt(iRow, iColumn) == cValue)
+  const uint8_t c_size = size();
+  if (c_values.size() != c_size)
+    throw CoreException(__FILE__, __LINE__);
+  for (uint8_t index = 0; index < c_size; index++)
+    setValueAt(index / m_columns, index % m_columns, c_values[index]);
+}
+
+Board::Position Board::getPosition(const uint8_t c_value) const
+{
+  for (uint8_t iRow = 0; iRow < m_rows; iRow++)
+    for (uint8_t iColumn = 0; iColumn < m_columns; iColumn++)
+      if (valueAt(iRow, iColumn) == c_value)
         return { iRow, iColumn };
   throw CoreException(__FILE__, __LINE__);
 }
 
-bool Board::operator==(const Board &cOther) const
+bool Board::operator==(const Board &c_other) const
 {
-  return (this->columns() == cOther.columns()
-          && this->rows() == cOther.rows()
-          && this->mMemory == cOther.mMemory);
+  return (this->columns() == c_other.columns()
+          && this->rows() == c_other.rows()
+          && this->m_memory == c_other.m_memory);
 }
 
-bool Board::operator!=(const Board &cOther) const
+bool Board::operator!=(const Board &c_other) const
 {
-  return !(*this == cOther);
+  return !(*this == c_other);
 }

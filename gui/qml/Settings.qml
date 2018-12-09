@@ -15,10 +15,10 @@ Item {
   function updateBoxes() {
     if (algorithmBox.currentIndex < 3) {
       orderRow.visible = true;
-      heuristicRow.visible = false;
+      heuristic_row.visible = false;
     } else {
       orderRow.visible = false;
-      heuristicRow.visible = true;
+      heuristic_row.visible = true;
     }
   }
 
@@ -144,7 +144,7 @@ Item {
       }
     }
     Row { // Row for choosing heuristics
-      id: heuristicRow
+      id: heuristic_row
       height: 50;
       visible: false;
 

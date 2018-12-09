@@ -10,17 +10,17 @@ struct State
   Direction direction;
 
   State() = default;
-  State(const uint64_t &cMemory, const Direction cDirection = Direction::None);
-  State(const Board& cBoard, const Direction cDirection = Direction::None);
+  State(const uint64_t &c_memory, const Direction c_direction = Direction::None);
+  State(const Board& c_board, const Direction c_direction = Direction::None);
 
   struct Hash
   {
-    std::size_t operator()(const State &cState) const;
+    std::size_t operator()(const State &c_state) const;
   };
 
   struct Equal
   {
-    bool operator()(const State &cLhs, const State &cRhs) const;
+    bool operator()(const State &c_lhs, const State &c_rhs) const;
   };
 };
 

@@ -12,8 +12,8 @@ class BoardModel : public QObject
   Q_OBJECT
   Board m_board;
   Answear m_answear;
-  QThread *m_thread = nullptr;
-  SolverWorker *m_worker = nullptr;
+  QThread *mp_thread = nullptr;
+  SolverWorker *mp_worker = nullptr;
 
 public:
   explicit BoardModel(QObject *parent = 0);

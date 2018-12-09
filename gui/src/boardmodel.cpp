@@ -111,16 +111,16 @@ int BoardModel::solve(QString algorithmText, QString orderText, int heuristicInd
 //    delete m_worker;
 
   m_answear = {};
-  m_worker = new SolverWorker(config, &m_answear);
-  m_thread = new QThread();
+  mp_worker = new SolverWorker(config, &m_answear);
+  mp_thread = new QThread();
 
-  m_worker->moveToThread(m_thread);
-  connect(m_thread, SIGNAL(started()), m_worker, SLOT(solve()));
-  connect(m_worker, SIGNAL(solved()), this, SLOT(handleSolved()));
-  connect(m_worker, SIGNAL(solved()), m_worker, SLOT(deleteLater()));
-  connect(m_worker, SIGNAL(solved()), m_thread, SLOT(quit()));
-  connect(m_thread, SIGNAL(finished()), m_thread, SLOT(deleteLater()));
-  m_thread->start();
+  mp_worker->moveToThread(mp_thread);
+  connect(mp_thread, SIGNAL(started()), mp_worker, SLOT(solve()));
+  connect(mp_worker, SIGNAL(solved()), this, SLOT(handleSolved()));
+  connect(mp_worker, SIGNAL(solved()), mp_worker, SLOT(deleteLater()));
+  connect(mp_worker, SIGNAL(solved()), mp_thread, SLOT(quit()));
+  connect(mp_thread, SIGNAL(finished()), mp_thread, SLOT(deleteLater()));
+  mp_thread->start();
   
   return true;
 }
@@ -147,7 +147,7 @@ int BoardModel::resultLength() const
 
 void BoardModel::cancelSolving()
 {
-  m_thread->requestInterruption();
+  mp_thread->requestInterruption();
 }
 
 bool BoardModel::wasInterrupted() const

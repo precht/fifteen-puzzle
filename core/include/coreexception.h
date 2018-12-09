@@ -5,10 +5,10 @@
 
 struct CoreException : public std::exception
 {
-  std::string mMessage;
+  std::string m_message;
 public:
-  CoreException(const std::string &message);
-  CoreException(const std::string &file, const int line, const std::string &message = ".");
+  CoreException(const std::string &c_message);
+  CoreException(const std::string &c_file, const int c_line, const std::string &c_message = ".");
   ~CoreException() noexcept;
   const char* what() const noexcept;
 };

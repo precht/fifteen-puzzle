@@ -7,11 +7,11 @@
 
 struct Utils
 {
-  static bool isSolvable(const Board &cBoard);
-  static Board constructFinalBoard(const uint8_t cRows, const uint8_t cColumns);
-  static void makeMovement(Board &board, Direction direction);
-  static void reverseMovement(Board &board, Direction direction);
-  static void printBoard(const Board &cBoard, std::ostream &output);
+  static bool isSolvable(const Board &c_board);
+  static Board constructFinalBoard(const uint8_t c_rows, const uint8_t c_columns);
+  static void makeMovement(Board &r_board, Direction direction);
+  static void reverseMovement(Board &r_board, Direction direction);
+  static void printBoard(const Board &c_board, std::ostream &output);
   static Solver* constructSolver(Solver::Algorithm algorithm);
 };
 

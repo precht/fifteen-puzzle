@@ -2,8 +2,8 @@
 #include "utils.h"
 #include <cassert>
 
-BestFirstSolver::BFState::BFState(const Board &cBoard, const uint8_t cEstimatedCost)
-  : memory(cBoard.memory()), estimatedCost(cEstimatedCost)
+BestFirstSolver::BFState::BFState(const Board &c_board, const uint8_t c_estimatedCost)
+  : memory(c_board.memory()), estimatedCost(c_estimatedCost)
 { }
 
 BestFirstSolver::BFState::operator State() const
@@ -11,51 +11,51 @@ BestFirstSolver::BFState::operator State() const
   return { memory, direction };
 }
 
-bool BestFirstSolver::Greater::operator()(const BFState &cLhs, const BFState &cRhs) const
+bool BestFirstSolver::Greater::operator()(const BFState &c_lhs, const BFState &c_rhs) const
 {
-  return (cLhs.estimatedCost > cRhs.estimatedCost);
+  return (c_lhs.estimatedCost > c_rhs.estimatedCost);
 }
 
 
-bool BestFirstSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
+bool BestFirstSolver::initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type)
 {
-  if (Solver::initializeSearchLoop(cInitialBoard, cType) == false)
+  if (Solver::initializeSearchLoop(c_initialBoard, c_type) == false)
     return false;
 
-  mPriorityQueue = {};
-  BFState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
-  mPriorityQueue.push(state);
+  m_priorityQueue = {};
+  BFState state = { m_initialBoard, m_heuristic(m_initialBoard, m_finalBoard, m_distance) };
+  m_priorityQueue.push(state);
   return true;
 }
 
 bool BestFirstSolver::isLoopEmpty() const
 {
-  return (mPriorityQueue.empty() || mIsSolved);
+  return (m_priorityQueue.empty() || m_isSolved);
 }
 
 bool BestFirstSolver::processNextState()
 {
   assert(!isLoopEmpty());
-  Board board = mInitialBoard;
-  BFState state = mPriorityQueue.top();
-  mPriorityQueue.pop();
-  mCheckedStates++;
+  Board board = m_initialBoard;
+  BFState state = m_priorityQueue.top();
+  m_priorityQueue.pop();
+  m_checkedStates++;
 
   board.setMemory(state.memory);
   Utils::makeMovement(board, state.direction);
   state.memory = board.memory();
 
-  if (mVisited.find(board) != mVisited.end())
+  if (m_visited.find(board) != m_visited.end())
     return false;
-  mVisited.insert(state);
+  m_visited.insert(state);
 
-  if (board == mFinalBoard) {
-    mIsSolved = true;
+  if (board == m_finalBoard) {
+    m_isSolved = true;
     storeResult();
     return true;
   }
 
-  state.estimatedCost = mHeuristic(board, mFinalBoard, mDistance);
+  state.estimatedCost = m_heuristic(board, m_finalBoard, m_distance);
 
   const Direction currentDirection = state.direction;
   auto possibleDirections = generatePossibleDirections(board);
@@ -63,7 +63,7 @@ bool BestFirstSolver::processNextState()
     if (Direction::isReverseDirection(direction, currentDirection))
       continue;
     state.direction = direction;
-    mPriorityQueue.push(state);
+    m_priorityQueue.push(state);
   }
 
   return false;

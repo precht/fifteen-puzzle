@@ -41,18 +41,9 @@ TEST(Utils, isSolvable_shouldBeTrue)
   b.setValueAt(2, 0, 0);
   EXPECT_TRUE(Utils::isSolvable(b));
 
-  Board c(3, 3);
-  c.setValueAt(0, 0, 1);
-  c.setValueAt(0, 1, 8);
-  c.setValueAt(0, 2, 2);
-
-  c.setValueAt(1, 0, 0);
-  c.setValueAt(1, 1, 4);
-  c.setValueAt(1, 2, 3);
-
-  c.setValueAt(2, 0, 7);
-  c.setValueAt(2, 1, 6);
-  c.setValueAt(2, 2, 5);
+  Board c(3, 3, { 1, 8, 2,
+                  0, 4, 3,
+                  7, 6, 5 });
 
   EXPECT_TRUE(Utils::isSolvable(b));
 
@@ -80,42 +71,21 @@ TEST(Utils, isSolvable_shouldNotBeTrue)
   EXPECT_FALSE(Utils::isSolvable(e));
   EXPECT_FALSE(Utils::isSolvable(f));
 
-  Board g(4, 4);
-  g.setValueAt(0, 0, 3);
-  g.setValueAt(0, 1, 9);
-  g.setValueAt(0, 2, 1);
-  g.setValueAt(0, 3, 15);
-
-  g.setValueAt(1, 0, 14);
-  g.setValueAt(1, 1, 11);
-  g.setValueAt(1, 2, 4);
-  g.setValueAt(1, 3, 6);
-
-  g.setValueAt(2, 0, 13);
-  g.setValueAt(2, 1, 0);
-  g.setValueAt(2, 2, 10);
-  g.setValueAt(2, 3, 12);
-
-  g.setValueAt(3, 0, 2);
-  g.setValueAt(3, 1, 7);
-  g.setValueAt(3, 2, 8);
-  g.setValueAt(3, 3, 5);
+  Board g(4, 4, {
+            3,  9,  1,  15,
+            14, 11, 4,  6,
+            13, 0,  10, 12,
+            2,  7,  8,  5
+          });
 
   EXPECT_FALSE(Utils::isSolvable(g));
 }
 
 TEST(Utils, generatePossibleDirection_zeroIsInCerter)
 {
-  Board a(3, 3);
-  a.setValueAt(0, 0, 1);
-  a.setValueAt(0, 1, 2);
-  a.setValueAt(0, 2, 3);
-  a.setValueAt(1, 0, 4);
-  a.setValueAt(1, 1, 0);
-  a.setValueAt(1, 2, 5);
-  a.setValueAt(2, 0, 6);
-  a.setValueAt(2, 1, 7);
-  a.setValueAt(2, 2, 8);
+  Board a(3, 3, { 1, 2, 3,
+                  4, 0, 5,
+                  6, 7, 8 });
   Solver *solver = new BfsSolver;
   auto d = solver->generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 4u);
@@ -128,11 +98,7 @@ TEST(Utils, generatePossibleDirection_zeroIsInCerter)
 
 TEST(Utils, generatePossibleDirectoin_zeroIsInUpLeftCorner)
 {
-  Board a(2, 2);
-  a.setValueAt(0, 0, 0);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 3);
+  Board a(2, 2, { 0, 1, 2, 3 });
   Solver *solver = new BfsSolver;
   auto d = solver->generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
@@ -143,11 +109,7 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInUpLeftCorner)
 
 TEST(Utils, generatePossibleDirectoin_zeroIsInDownRightCorner)
 {
-  Board a(2, 2);
-  a.setValueAt(0, 0, 3);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 0);
+  Board a(2, 2, { 3, 1, 2, 0 });
   Solver *solver = new BfsSolver;
   auto d = solver->generatePossibleDirections(a);
   EXPECT_EQ(d.size(), 2u);
@@ -158,11 +120,7 @@ TEST(Utils, generatePossibleDirectoin_zeroIsInDownRightCorner)
 
 TEST(Utils, makeMovement_shouldMake)
 {
-  Board a(2, 2);
-  a.setValueAt(0, 0, 0);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 3);
+  Board a(2, 2, { 0, 1, 2, 3 });
 
   Board b = a;
   Utils::makeMovement(b, Direction::Left);
@@ -188,18 +146,10 @@ TEST(Utils, makeMovement_shouldMake)
 
 TEST(Utils, makeMovement9Puzzle)
 {
-  Board a(3, 3), b, expect;
-  a.setValueAt(0, 0, 1);
-  a.setValueAt(0, 1, 2);
-  a.setValueAt(0, 2, 3);
-
-  a.setValueAt(1, 0, 4);
-  a.setValueAt(1, 1, 0);
-  a.setValueAt(1, 2, 5);
-
-  a.setValueAt(2, 0, 7);
-  a.setValueAt(2, 1, 8);
-  a.setValueAt(2, 2, 6);
+  Board a(3, 3, { 1, 2, 3,
+                  4, 0, 5,
+                  7, 8, 6 });
+  Board b, expect;
 
   expect = b = a;
   expect.setValueAt(1, 1, 4);
@@ -229,30 +179,23 @@ TEST(Utils, makeMovement9Puzzle)
 
 TEST(Utils, makeMovement_shouldThrow)
 {
-  Board a(2, 2);
-  a.setValueAt(0, 0, 0);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 3);
+  Board a(2, 2, { 0, 1, 2, 3 });
   EXPECT_THROW(Utils::makeMovement(a, Direction::Right), CoreException);
   EXPECT_THROW(Utils::makeMovement(a, Direction::Down), CoreException);
-  a.setValueAt(0, 0, 3);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 0);
+  a = Board(2, 2, { 3, 1, 2, 0 });
   EXPECT_THROW(Utils::makeMovement(a, Direction::Left), CoreException);
   EXPECT_THROW(Utils::makeMovement(a, Direction::Up), CoreException);
 }
 
 TEST(Utils, reverseMovement_shouldMake)
 {
-  Board a(2, 2), b;
+  Board a(2, 2, { 0, 1, 2, 3 });
   a.setValueAt(0, 0, 0);
   a.setValueAt(0, 1, 1);
   a.setValueAt(1, 0, 2);
   a.setValueAt(1, 1, 3);
 
-  b = a;
+  Board b = a;
   Utils::reverseMovement(b, Direction::Right);
   a.setValueAt(0, 0, 1);
   a.setValueAt(0, 1, 0);
@@ -279,37 +222,20 @@ TEST(Utils, reverseMovement_shouldMake)
 
 TEST(Utils, reverseMovement_shouldThrow)
 {
-  Board a(2, 2);
-  a.setValueAt(0, 0, 0);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 3);
+  Board a(2, 2, { 0, 1, 2, 3 });
   EXPECT_THROW(Utils::reverseMovement(a, Direction::Left), CoreException);
   EXPECT_THROW(Utils::reverseMovement(a, Direction::Up), CoreException);
-  a.setValueAt(0, 0, 3);
-  a.setValueAt(0, 1, 1);
-  a.setValueAt(1, 0, 2);
-  a.setValueAt(1, 1, 0);
+  a = Board(2, 2, { 3, 1, 2, 0 });
   EXPECT_THROW(Utils::reverseMovement(a, Direction::Right), CoreException);
   EXPECT_THROW(Utils::reverseMovement(a, Direction::Down), CoreException);
 }
 
 TEST(Utils, reverseMovement9Puzzle)
 {
-  Board a(3, 3), b;
-  a.setValueAt(0, 0, 1);
-  a.setValueAt(0, 1, 2);
-  a.setValueAt(0, 2, 3);
-
-  a.setValueAt(1, 0, 4);
-  a.setValueAt(1, 1, 0);
-  a.setValueAt(1, 2, 5);
-
-  a.setValueAt(2, 0, 7);
-  a.setValueAt(2, 1, 8);
-  a.setValueAt(2, 2, 6);
-
-  b = a;
+  Board a(3, 3, { 1, 2, 3,
+                  4, 0, 5,
+                  7, 8, 6 });
+  Board b = a;
   Utils::makeMovement(b, Direction::Right);
   Utils::reverseMovement(b, Direction::Right);
   EXPECT_EQ(b, a);

@@ -3,40 +3,40 @@
 #include <climits>
 #include <cassert>
 
-bool AStarSolver::initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType)
+bool AStarSolver::initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type)
 {
-  if (Solver::initializeSearchLoop(cInitialBoard, cType) == false)
+  if (Solver::initializeSearchLoop(c_initialBoard, c_type) == false)
     return false;
 
-  mPriorityQueue = {};
-  AState state = { mInitialBoard, mHeuristic(mInitialBoard, mFinalBoard, mDistance) };
-  mPriorityQueue.push(state);
+  m_priorityQueue = {};
+  AState state = { m_initialBoard, m_heuristic(m_initialBoard, m_finalBoard, m_distance) };
+  m_priorityQueue.push(state);
   return true;
 }
 
 bool AStarSolver::isLoopEmpty() const
 {
-  return (mPriorityQueue.empty() || mIsSolved);
+  return (m_priorityQueue.empty() || m_isSolved);
 }
 
 bool AStarSolver::processNextState()
 {
   assert(!isLoopEmpty());
-  Board board = mInitialBoard;
-  AState state = mPriorityQueue.top();
-  mPriorityQueue.pop();
-  mCheckedStates++;
+  Board board = m_initialBoard;
+  AState state = m_priorityQueue.top();
+  m_priorityQueue.pop();
+  m_checkedStates++;
 
   board.setMemory(state.memory);
   Utils::makeMovement(board, state.direction);
   state.memory = board.memory();
 
-  if (mVisited.find(board) != mVisited.end())
+  if (m_visited.find(board) != m_visited.end())
     return false;
-  mVisited.insert(state);
+  m_visited.insert(state);
 
-  if (board == mFinalBoard) {
-    mIsSolved = true;
+  if (board == m_finalBoard) {
+    m_isSolved = true;
     storeResult();
     return true;
   }
@@ -46,7 +46,7 @@ bool AStarSolver::processNextState()
     return false;
 
   state.depth++;
-  state.estimatedCost = state.depth + mHeuristic(board, mFinalBoard, mDistance);
+  state.estimatedCost = state.depth + m_heuristic(board, m_finalBoard, m_distance);
 
   const Direction currentDirection = state.direction;
   auto possibleDirections = generatePossibleDirections(board);
@@ -54,14 +54,14 @@ bool AStarSolver::processNextState()
     if (Direction::isReverseDirection(direction, currentDirection))
       continue;
     state.direction = direction;
-    mPriorityQueue.push(state);
+    m_priorityQueue.push(state);
   }
 
   return false;
 }
 
-AStarSolver::AState::AState(const Board &cBoard, const uint32_t cEstimatedCost)
-  : memory(cBoard.memory()), estimatedCost(cEstimatedCost)
+AStarSolver::AState::AState(const Board &c_board, const uint32_t c_estimatedCost)
+  : memory(c_board.memory()), estimatedCost(c_estimatedCost)
 { }
 
 AStarSolver::AState::operator State() const
@@ -69,7 +69,7 @@ AStarSolver::AState::operator State() const
   return { memory, direction };
 }
 
-bool AStarSolver::Greater::operator()(const AState &cLhs, const AState &cRhs) const
+bool AStarSolver::Greater::operator()(const AState &c_lhs, const AState &c_rhs) const
 {
-  return (cLhs.estimatedCost > cRhs.estimatedCost);
+  return (c_lhs.estimatedCost > c_rhs.estimatedCost);
 }

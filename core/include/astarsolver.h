@@ -15,22 +15,22 @@ public:
     uint32_t depth = 0;
 
     AState() = default;
-    AState(const Board &cBoard, const uint32_t cEstimatedCost);
+    AState(const Board &c_board, const uint32_t c_estimatedCost);
     operator State() const;
   };
 
   struct Greater
   {
-    bool operator()(const AState &cLhs, const AState &cRhs) const;
+    bool operator()(const AState &c_lhs, const AState &c_rhs) const;
   };
 
-  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type) override;
   bool isLoopEmpty() const override;
   bool processNextState() override;
 
 private:
-  std::priority_queue<AState, std::vector<AState>, Greater> mPriorityQueue;
-  Heuristic mHeuristic;
+  std::priority_queue<AState, std::vector<AState>, Greater> m_priorityQueue;
+  Heuristic m_heuristic;
 };
 
 #endif // ASTARSOLVER_H

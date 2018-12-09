@@ -84,3 +84,32 @@ TEST(Board, getPosition_shouldPass)
   EXPECT_EQ(a.getPosition(0).row, 0);
   EXPECT_EQ(a.getPosition(0).column, 1);
 }
+
+TEST(Board, setValues_shouldPass)
+{
+  std::vector<uint8_t> values = { 0, 8, 7,
+                                  6, 5, 4,
+                                  3, 2, 1 };
+  Board a(3, 3, values);
+  for (uint8_t index = 0; index < 9; index++)
+    EXPECT_EQ(a.valueAt(index / 3, index % 3), values[index]);
+
+  a = Board(3, 3);
+  a.setValues(values);
+  for (uint8_t index = 0; index < 9; index++)
+    EXPECT_EQ(a.valueAt(index / 3, index % 3), values[index]);
+
+  values = { 0,  15, 14, 13,
+             12, 11, 10, 9,
+             8,  7,  6,  5,
+             4,  3,  2,  1 };
+
+  a = Board(4, 4, values);
+  for (uint8_t index = 0; index < 16; index++)
+    EXPECT_EQ(a.valueAt(index / 4, index % 4), values[index]);
+
+  a = Board(4, 4);
+  a.setValues(values);
+  for (uint8_t index = 0; index < 16; index++)
+    EXPECT_EQ(a.valueAt(index / 4, index % 4), values[index]);
+}

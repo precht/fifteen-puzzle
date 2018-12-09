@@ -1,12 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
-        <file>Board.qml</file>
-        <file>qtquickcontrols2.conf</file>
-        <file>Cell.qml</file>
-        <file>Props.qml</file>
-        <file>qmldir</file>
-        <file>Settings.qml</file>
-        <file>solve.js</file>
+        <file>qml/main.qml</file>
+        <file>qml/Board.qml</file>
+        <file>qml/qtquickcontrols2.conf</file>
+        <file>qml/Cell.qml</file>
+        <file>qml/Props.qml</file>
+        <file>qml/qmldir</file>
+        <file>qml/Settings.qml</file>
     </qresource>
 </RCC>

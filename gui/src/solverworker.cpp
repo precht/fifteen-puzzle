@@ -3,8 +3,8 @@
 #include <sstream>
 #include <QThread>
 
-SolverWorker::SolverWorker(const Config &config, Answear *p_answear)
-  : m_config(config), mp_answear(p_answear)
+SolverWorker::SolverWorker(const Config &c_config, Answear *p_answear)
+  : m_config(c_config), mp_answear(p_answear)
 { }
 
 void SolverWorker::solve()

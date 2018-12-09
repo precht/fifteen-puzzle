@@ -6,10 +6,10 @@
 
 class BfsSolver : public Solver
 {
-  std::queue<State> mQueue;
+  std::queue<State> m_queue;
 
 public:
-  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type) override;
   bool isLoopEmpty() const override;
   bool processNextState() override;
 };

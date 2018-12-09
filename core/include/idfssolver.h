@@ -15,21 +15,21 @@ public:
     Direction direction;
     uint32_t depth = 0;
 
-    IdfsState(const Board &cBoard);
+    IdfsState(const Board &c_board);
     operator State() const;
 
     struct Hash
     {
-      std::size_t operator()(const State &cState) const;
+      std::size_t operator()(const State &c_state) const;
     };
 
     struct Equal
     {
-      bool operator()(const State &cLhs, const State &cRhs) const;
+      bool operator()(const State &c_lhs, const State &c_rhs) const;
     };
   };
 
-  bool initializeSearchLoop(const Board &cInitialBoard, const Heuristic::Type cType) override;
+  bool initializeSearchLoop(const Board &c_initialBoard, const Heuristic::Type c_type) override;
   bool isLoopEmpty() const override;
   bool processNextState() override;
 
