@@ -1,6 +1,6 @@
 #QML_IMPORT_PATH = /opt/qt \
 
-QT += quick
+QT += quick quickcontrols2 widgets
 
 include(../common.pri)
 include(../core/core.pri)
@@ -20,4 +20,3 @@ SOURCES += \
     src/solverworker.cpp
 
 RESOURCES += qml.qrc
-`

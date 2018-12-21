@@ -4,9 +4,10 @@ Item {
   id: cell
   property int value: 0;
   property int index: 0;
-  property string clickedColor: "lightblue";
   width: Props.cellSize;
   height: Props.cellSize;
+
+  SystemPalette { id: pallete; }
 
   function setValue(newValue) {
     if (newValue === 0)
@@ -16,7 +17,7 @@ Item {
   }
 
   function resetColor() {
-    rect.color = "transparent";
+    rect.color = pallete.light;
   }
 
   function blockCell() {
@@ -29,7 +30,7 @@ Item {
 
   Rectangle {
     id: rect;
-    color: "transparent";
+    color: "white";
     border.color: "black";
     border.width: 1;
     width: parent.width - 1;
@@ -39,7 +40,7 @@ Item {
     MouseArea {
       id: mouseArea;
       anchors.fill: parent;
-      onPressed: parent.color = (Qt.colorEqual(parent.color, clickedColor) ? "transparent" : clickedColor);
+      onPressed: parent.color = pallete.highlight;
       onReleased: cell.parent.changed(cell.index); // NOTE: grid containing cells must define signal
     }
   }

@@ -107,6 +107,7 @@ void Solver::setOrder(const std::vector<Direction> &c_order)
 
 void Solver::randomOrder(bool isRandomOrder)
 {
-  m_order = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
   m_isRandomOrder = isRandomOrder;
+  if (isRandomOrder)
+    m_order = { Direction::Left, Direction::Right, Direction::Up, Direction::Down };
 }
