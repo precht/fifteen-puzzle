@@ -6,6 +6,7 @@
 
 int main(int argc, char *argv[])
 {
+  QQuickStyle::setStyle("Default");
   QQuickStyle::setFallbackStyle("Default");
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 

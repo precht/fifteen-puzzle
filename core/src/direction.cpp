@@ -11,11 +11,20 @@ Direction::operator uint8_t() const
 
 Direction::operator std::string() const
 {
+//  switch (m_type) {
+//  case Left: return "L";
+//  case Right: return "R";
+//  case Up: return "U";
+//  case Down: return"D";
+//  default: return "N";
+//  }
+
+  // NOTE: switched directions
   switch (m_type) {
-  case Left: return "L";
-  case Right: return "R";
-  case Up: return "U";
-  case Down: return"D";
+  case Left: return "R";
+  case Right: return "L";
+  case Up: return "D";
+  case Down: return"U";
   default: return "N";
   }
 }

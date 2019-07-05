@@ -7,7 +7,9 @@ Item {
   width: Props.cellSize;
   height: Props.cellSize;
 
-  SystemPalette { id: pallete; }
+//  SystemPalette { id: pallete; }
+//  pallete.light
+//  pallete.highlight
 
   function setValue(newValue) {
     if (newValue === 0)
@@ -17,7 +19,7 @@ Item {
   }
 
   function resetColor() {
-    rect.color = pallete.light;
+    rect.color = "transparent";
   }
 
   function blockCell() {
@@ -40,7 +42,7 @@ Item {
     MouseArea {
       id: mouseArea;
       anchors.fill: parent;
-      onPressed: parent.color = pallete.highlight;
+      onPressed: parent.color = "lightblue";
       onReleased: cell.parent.changed(cell.index); // NOTE: grid containing cells must define signal
     }
   }
